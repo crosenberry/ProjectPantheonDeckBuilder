@@ -2,7 +2,7 @@
   <Project Path="Pantheon.Core.Tests.csproj" />
   <Project Path="Pantheon.Core.csproj" />
   <Project Path="Assembly-CSharp-Editor.csproj" />
+  <Project Path="Pantheon.Unity.csproj" />
   <Project Path="Pantheon.PlayTests.csproj" />
   <Project Path="Assembly-CSharp.csproj" />
-  <Project Path="Pantheon.Unity.csproj" />
 </Solution>
