@@ -1,0 +1,6 @@
+{
+    "name": "Pantheon.Unity",
+    "rootNamespace": "Pantheon.Unity",
+    "references": ["Pantheon.Core"],
+    "autoReferenced": true
+}

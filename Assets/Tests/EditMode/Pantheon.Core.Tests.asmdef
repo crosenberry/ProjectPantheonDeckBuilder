@@ -1,0 +1,10 @@
+{
+    "name": "Pantheon.Core.Tests",
+    "rootNamespace": "Pantheon.Core.Tests",
+    "references": ["UnityEngine.TestRunner", "UnityEditor.TestRunner", "Pantheon.Core"],
+    "includePlatforms": ["Editor"],
+    "precompiledReferences": ["nunit.framework.dll"],
+    "defineConstraints": ["UNITY_INCLUDE_TESTS"],
+    "autoReferenced": false,
+    "overrideReferences": true
+}
