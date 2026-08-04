@@ -13,6 +13,7 @@ Implement **only** this slice, nothing beyond it:
 
 ## Before writing any code
 
+0. Check the current branch (`git branch --show-current`). If it's `main` or `develop`, stop and create/switch to a `feature/<short-name>` branch off `develop` first (per `CLAUDE.md`'s branch workflow) — do not write code on `main` or `develop` directly. If a feature branch for this work already exists and is checked out, continue on it; don't create a second one for the same feature.
 1. Read `CLAUDE.md` and the documentation under `Docs/` relevant to this slice.
 2. Inspect the existing code the slice touches or should imitate (Glob/Grep/Read): current implementations, tests, asmdefs, conventions.
 3. If an approved feature plan exists for this work (from `/feature-plan` — check the conversation, or a plan file if the user points to one), read it and follow its acceptance criteria and slice boundaries.
@@ -32,7 +33,7 @@ Implement **only** this slice, nothing beyond it:
 ## Validation
 
 - Run all tests and validation the TDD skill requires: confirmed red before implementing, confirmed full green after (all tests, not only the new ones). Never report red or green without a real run.
-- Review the final `git diff` (and `git status` for untracked files) for accidental or unrelated changes — stray files, drive-by edits, editor-generated noise. Remove anything that isn't part of the slice before reporting. Do not commit unless the user asked.
+- Review the final `git diff` (and `git status` for untracked files) for accidental or unrelated changes — stray files, drive-by edits, editor-generated noise. Remove anything that isn't part of the slice before reporting. Do not commit unless the user asked; when they do, commit to the current feature branch — never merge into `develop` or `main` unless separately asked.
 - For Unity-specific work, identify what remains that code cannot do: prefab or scene edits, component attachment, serialized-field wiring, layer/tag setup, Input System actions, ScriptableObject asset creation, `.meta` generation, or other Inspector configuration.
 
 ## Completion report
