@@ -1,0 +1,9 @@
+{
+    "name": "Pantheon.PlayTests",
+    "rootNamespace": "Pantheon.PlayTests",
+    "references": ["UnityEngine.TestRunner", "Pantheon.Core", "Pantheon.Unity"],
+    "precompiledReferences": ["nunit.framework.dll"],
+    "defineConstraints": ["UNITY_INCLUDE_TESTS"],
+    "autoReferenced": false,
+    "overrideReferences": true
+}
