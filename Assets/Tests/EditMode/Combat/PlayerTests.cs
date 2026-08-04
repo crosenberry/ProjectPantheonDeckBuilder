@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using NUnit.Framework;
 using Pantheon.Core.Combat;
 
@@ -23,6 +24,170 @@ namespace Pantheon.Core.Tests.Combat
 
             Assert.Throws<InvalidOperationException>(() => player.SpendEnergy(2));
             Assert.That(player.CurrentEnergy, Is.EqualTo(1));
+        }
+
+        [Test]
+        public void StartTurn_RefillsEnergyToMax()
+        {
+            var player = new Player(startingEnergy: 3);
+            player.SpendEnergy(3);
+
+            player.StartTurn(cardsToDraw: 0);
+
+            Assert.That(player.CurrentEnergy, Is.EqualTo(player.MaxEnergy));
+        }
+
+        [Test]
+        public void StartTurn_DrawsRequestedNumberOfCardsFromDrawPile()
+        {
+            var player = new Player(startingEnergy: 3);
+            var deck = Enumerable.Range(1, 5).Select(i => new Card($"Card {i}", energyCost: 1, damageAmount: 1));
+            player.AddToDrawPile(deck);
+
+            player.StartTurn(cardsToDraw: 5);
+
+            Assert.That(player.Hand.Count, Is.EqualTo(5));
+            Assert.That(player.DrawPile.Count, Is.EqualTo(0));
+        }
+
+        [Test]
+        public void StartTurn_DrawPileHasFewerCardsThanRequested_DrawsOnlyWhatsAvailable()
+        {
+            var player = new Player(startingEnergy: 3);
+            var deck = Enumerable.Range(1, 2).Select(i => new Card($"Card {i}", energyCost: 1, damageAmount: 1));
+            player.AddToDrawPile(deck);
+
+            player.StartTurn(cardsToDraw: 5);
+
+            Assert.That(player.Hand.Count, Is.EqualTo(2));
+            Assert.That(player.DrawPile.Count, Is.EqualTo(0));
+        }
+
+        [Test]
+        public void EndTurn_MovesHandToDiscardPileAndClearsHand()
+        {
+            var player = new Player(startingEnergy: 3);
+            var deck = Enumerable.Range(1, 3).Select(i => new Card($"Card {i}", energyCost: 1, damageAmount: 1));
+            player.AddToDrawPile(deck);
+            player.StartTurn(cardsToDraw: 3);
+
+            player.EndTurn();
+
+            Assert.That(player.Hand.Count, Is.EqualTo(0));
+            Assert.That(player.DiscardPile.Count, Is.EqualTo(3));
+        }
+
+        [Test]
+        public void StartTurn_DrawPileEmptyWithCardsInDiscard_ShufflesDiscardIntoDrawPileAndDraws()
+        {
+            var player = new Player(startingEnergy: 3, new FakeRandom());
+            var deck = Enumerable.Range(1, 3).Select(i => new Card($"Card {i}", energyCost: 1, damageAmount: 1));
+            player.AddToDrawPile(deck);
+            player.StartTurn(cardsToDraw: 3);
+            player.EndTurn();
+
+            player.StartTurn(cardsToDraw: 3);
+
+            Assert.That(player.Hand.Count, Is.EqualTo(3));
+            Assert.That(player.DrawPile.Count, Is.EqualTo(0));
+            Assert.That(player.DiscardPile.Count, Is.EqualTo(0));
+        }
+
+        [Test]
+        public void StartTurn_DrawPileRunsOutMidDraw_ShufflesDiscardAndDrawsRemainder()
+        {
+            var player = new Player(startingEnergy: 3, new FakeRandom());
+            var deck = Enumerable.Range(1, 5).Select(i => new Card($"Card {i}", energyCost: 1, damageAmount: 1)).ToList();
+            player.AddToDrawPile(deck);
+            player.StartTurn(cardsToDraw: 3);
+            player.EndTurn();
+
+            player.StartTurn(cardsToDraw: 5);
+
+            Assert.That(player.Hand.Count, Is.EqualTo(5));
+            Assert.That(player.DrawPile.Count, Is.EqualTo(0));
+            Assert.That(player.DiscardPile.Count, Is.EqualTo(0));
+        }
+
+        [Test]
+        public void StartTurn_TotalCardsAcrossBothPilesLessThanRequested_DrawsAllAvailableCards()
+        {
+            var player = new Player(startingEnergy: 3, new FakeRandom());
+            var deck = Enumerable.Range(1, 3).Select(i => new Card($"Card {i}", energyCost: 1, damageAmount: 1));
+            player.AddToDrawPile(deck);
+            player.StartTurn(cardsToDraw: 1);
+            player.EndTurn();
+
+            player.StartTurn(cardsToDraw: 5);
+
+            Assert.That(player.Hand.Count, Is.EqualTo(3));
+            Assert.That(player.DrawPile.Count, Is.EqualTo(0));
+            Assert.That(player.DiscardPile.Count, Is.EqualTo(0));
+        }
+
+        [Test]
+        public void GainBlock_IncreasesCurrentBlock()
+        {
+            var player = new Player(startingEnergy: 3);
+
+            player.GainBlock(5);
+
+            Assert.That(player.CurrentBlock, Is.EqualTo(5));
+        }
+
+        [Test]
+        public void TakeDamage_DamageLessThanBlock_ReducesBlockOnlyNoHPLoss()
+        {
+            var player = new Player(startingEnergy: 3, startingHP: 70, new SystemRandom());
+            player.GainBlock(10);
+
+            player.TakeDamage(6);
+
+            Assert.That(player.CurrentBlock, Is.EqualTo(4));
+            Assert.That(player.CurrentHP, Is.EqualTo(70));
+        }
+
+        [Test]
+        public void TakeDamage_DamageExceedsBlock_ExcessReducesHP()
+        {
+            var player = new Player(startingEnergy: 3, startingHP: 70, new SystemRandom());
+            player.GainBlock(5);
+
+            player.TakeDamage(8);
+
+            Assert.That(player.CurrentBlock, Is.EqualTo(0));
+            Assert.That(player.CurrentHP, Is.EqualTo(67));
+        }
+
+        [Test]
+        public void TakeDamage_NoBlock_ReducesHPDirectly()
+        {
+            var player = new Player(startingEnergy: 3, startingHP: 70, new SystemRandom());
+
+            player.TakeDamage(8);
+
+            Assert.That(player.CurrentHP, Is.EqualTo(62));
+        }
+
+        [Test]
+        public void TakeDamage_AmountExceedsCurrentHP_ClampsAtZero()
+        {
+            var player = new Player(startingEnergy: 3, startingHP: 10, new SystemRandom());
+
+            player.TakeDamage(999);
+
+            Assert.That(player.CurrentHP, Is.EqualTo(0));
+        }
+
+        [Test]
+        public void StartTurn_ResetsBlockToZero()
+        {
+            var player = new Player(startingEnergy: 3);
+            player.GainBlock(8);
+
+            player.StartTurn(cardsToDraw: 0);
+
+            Assert.That(player.CurrentBlock, Is.EqualTo(0));
         }
     }
 }

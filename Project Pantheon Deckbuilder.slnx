@@ -1,6 +1,6 @@
 ﻿<Solution>
   <Project Path="Pantheon.Core.Tests.csproj" />
-  <Project Path="Assembly-CSharp-Editor.csproj" />
   <Project Path="Pantheon.Core.csproj" />
+  <Project Path="Assembly-CSharp-Editor.csproj" />
   <Project Path="Assembly-CSharp.csproj" />
 </Solution>
