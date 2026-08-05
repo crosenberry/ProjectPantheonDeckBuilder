@@ -139,5 +139,131 @@ namespace Pantheon.Core.Tests.Combat
             Assert.That(player.CurrentBlock, Is.EqualTo(0));
             Assert.That(player.CurrentHP, Is.EqualTo(65));
         }
+
+        [Test]
+        public void PlayCard_PlayerHasStrength_AddsFlatDamageToAttackCard()
+        {
+            var player = new Player(startingEnergy: 1);
+            player.GainStrength(3);
+            var enemy = new Enemy(maxHP: 42);
+            var quickShot = new Card("Quick Shot", energyCost: 1, damageAmount: 6);
+            player.AddToDrawPile(new[] { quickShot });
+            player.StartTurn(cardsToDraw: 1);
+
+            CombatResolver.PlayCard(player, quickShot, enemy);
+
+            Assert.That(enemy.CurrentHP, Is.EqualTo(33));
+        }
+
+        [Test]
+        public void PlayCard_PlayerDrained_ReducesAttackDamageByQuarterRoundedDown()
+        {
+            var player = new Player(startingEnergy: 1);
+            var enemy = new Enemy(maxHP: 42);
+            var strike = new Card("Strike", energyCost: 1, damageAmount: 8);
+            player.AddToDrawPile(new[] { strike });
+            player.StartTurn(cardsToDraw: 1);
+            player.ApplyDrained(1);
+
+            CombatResolver.PlayCard(player, strike, enemy);
+
+            Assert.That(enemy.CurrentHP, Is.EqualTo(36));
+        }
+
+        [Test]
+        public void PlayCard_TargetExposed_IncreasesDamageTakenByHalfRoundedDown()
+        {
+            var player = new Player(startingEnergy: 1);
+            var enemy = new Enemy(maxHP: 42);
+            enemy.ApplyExposed(1);
+            var strike = new Card("Strike", energyCost: 1, damageAmount: 8);
+            player.AddToDrawPile(new[] { strike });
+            player.StartTurn(cardsToDraw: 1);
+
+            CombatResolver.PlayCard(player, strike, enemy);
+
+            Assert.That(enemy.CurrentHP, Is.EqualTo(30));
+        }
+
+        [Test]
+        public void PlayCard_PlayerHasStrength_DoesNotAffectBlockOnlyCard()
+        {
+            var player = new Player(startingEnergy: 1);
+            player.GainStrength(3);
+            var enemy = new Enemy(maxHP: 42);
+            var sideStep = new Card("Side Step", energyCost: 1, damageAmount: 0, blockAmount: 5);
+            player.AddToDrawPile(new[] { sideStep });
+            player.StartTurn(cardsToDraw: 1);
+
+            CombatResolver.PlayCard(player, sideStep, enemy);
+
+            Assert.That(player.CurrentBlock, Is.EqualTo(5));
+        }
+
+        [Test]
+        public void PlayCard_PlayerSundered_ReducesBlockGainedByQuarterRoundedDown()
+        {
+            var player = new Player(startingEnergy: 1);
+            var enemy = new Enemy(maxHP: 42);
+            var sideStep = new Card("Side Step", energyCost: 1, damageAmount: 0, blockAmount: 8);
+            player.AddToDrawPile(new[] { sideStep });
+            player.StartTurn(cardsToDraw: 1);
+            player.ApplySundered(1);
+
+            CombatResolver.PlayCard(player, sideStep, enemy);
+
+            Assert.That(player.CurrentBlock, Is.EqualTo(6));
+        }
+
+        [Test]
+        public void PlayCard_PlayerSundered_DoesNotAffectAttackDamage()
+        {
+            var player = new Player(startingEnergy: 1);
+            player.ApplySundered(2);
+            var enemy = new Enemy(maxHP: 42);
+            var quickShot = new Card("Quick Shot", energyCost: 1, damageAmount: 6);
+            player.AddToDrawPile(new[] { quickShot });
+            player.StartTurn(cardsToDraw: 1);
+
+            CombatResolver.PlayCard(player, quickShot, enemy);
+
+            Assert.That(enemy.CurrentHP, Is.EqualTo(36));
+        }
+
+        [Test]
+        public void EnemyAttack_EnemyHasStrength_AddsFlatDamage()
+        {
+            var player = new Player(startingEnergy: 3, startingHP: 70, new SystemRandom());
+            var enemy = new Enemy(maxHP: 42, attackDamage: 10);
+            enemy.GainStrength(2);
+
+            CombatResolver.EnemyAttack(enemy, player);
+
+            Assert.That(player.CurrentHP, Is.EqualTo(58));
+        }
+
+        [Test]
+        public void EnemyAttack_EnemyDrained_ReducesDamageByQuarterRoundedDown()
+        {
+            var player = new Player(startingEnergy: 3, startingHP: 70, new SystemRandom());
+            var enemy = new Enemy(maxHP: 42, attackDamage: 8);
+            enemy.ApplyDrained(1);
+
+            CombatResolver.EnemyAttack(enemy, player);
+
+            Assert.That(player.CurrentHP, Is.EqualTo(64));
+        }
+
+        [Test]
+        public void EnemyAttack_PlayerExposed_IncreasesDamageByHalfRoundedDown()
+        {
+            var player = new Player(startingEnergy: 3, startingHP: 70, new SystemRandom());
+            player.ApplyExposed(1);
+            var enemy = new Enemy(maxHP: 42, attackDamage: 8);
+
+            CombatResolver.EnemyAttack(enemy, player);
+
+            Assert.That(player.CurrentHP, Is.EqualTo(58));
+        }
     }
 }

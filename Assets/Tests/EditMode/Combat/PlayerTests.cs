@@ -189,5 +189,99 @@ namespace Pantheon.Core.Tests.Combat
 
             Assert.That(player.CurrentBlock, Is.EqualTo(0));
         }
+
+        [Test]
+        public void GainStrength_IncreasesStrength()
+        {
+            var player = new Player(startingEnergy: 3);
+
+            player.GainStrength(2);
+
+            Assert.That(player.Strength, Is.EqualTo(2));
+        }
+
+        [Test]
+        public void ApplyExposed_IncreasesExposed()
+        {
+            var player = new Player(startingEnergy: 3);
+
+            player.ApplyExposed(2);
+
+            Assert.That(player.Exposed, Is.EqualTo(2));
+        }
+
+        [Test]
+        public void ApplyDrained_IncreasesDrained()
+        {
+            var player = new Player(startingEnergy: 3);
+
+            player.ApplyDrained(2);
+
+            Assert.That(player.Drained, Is.EqualTo(2));
+        }
+
+        [Test]
+        public void ApplySundered_IncreasesSundered()
+        {
+            var player = new Player(startingEnergy: 3);
+
+            player.ApplySundered(2);
+
+            Assert.That(player.Sundered, Is.EqualTo(2));
+        }
+
+        [Test]
+        public void StartTurn_ExposedAboveZero_DecrementsByOne()
+        {
+            var player = new Player(startingEnergy: 3);
+            player.ApplyExposed(2);
+
+            player.StartTurn(cardsToDraw: 0);
+
+            Assert.That(player.Exposed, Is.EqualTo(1));
+        }
+
+        [Test]
+        public void StartTurn_ExposedAtZero_StaysAtZero()
+        {
+            var player = new Player(startingEnergy: 3);
+
+            player.StartTurn(cardsToDraw: 0);
+
+            Assert.That(player.Exposed, Is.EqualTo(0));
+        }
+
+        [Test]
+        public void StartTurn_DrainedAboveZero_DecrementsByOne()
+        {
+            var player = new Player(startingEnergy: 3);
+            player.ApplyDrained(2);
+
+            player.StartTurn(cardsToDraw: 0);
+
+            Assert.That(player.Drained, Is.EqualTo(1));
+        }
+
+        [Test]
+        public void StartTurn_SunderedAboveZero_DecrementsByOne()
+        {
+            var player = new Player(startingEnergy: 3);
+            player.ApplySundered(2);
+
+            player.StartTurn(cardsToDraw: 0);
+
+            Assert.That(player.Sundered, Is.EqualTo(1));
+        }
+
+        [Test]
+        public void StartTurn_StrengthDoesNotDecay()
+        {
+            var player = new Player(startingEnergy: 3);
+            player.GainStrength(3);
+
+            player.StartTurn(cardsToDraw: 0);
+
+            Assert.That(player.Strength, Is.EqualTo(3));
+        }
     }
 }

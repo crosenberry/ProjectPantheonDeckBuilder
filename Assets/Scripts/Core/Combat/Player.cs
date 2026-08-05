@@ -14,6 +14,10 @@ namespace Pantheon.Core.Combat
         public int MaxHP { get; }
         public int CurrentHP { get; private set; }
         public int CurrentBlock { get; private set; }
+        public int Strength { get; private set; }
+        public int Exposed { get; private set; }
+        public int Drained { get; private set; }
+        public int Sundered { get; private set; }
         public IReadOnlyList<Card> DrawPile => _drawPile;
         public IReadOnlyList<Card> DiscardPile => _discardPile;
         public IReadOnlyList<Card> Hand => _hand;
@@ -55,6 +59,9 @@ namespace Pantheon.Core.Combat
         {
             CurrentEnergy = MaxEnergy;
             CurrentBlock = 0;
+            Exposed = System.Math.Max(0, Exposed - 1);
+            Drained = System.Math.Max(0, Drained - 1);
+            Sundered = System.Math.Max(0, Sundered - 1);
 
             for (var i = 0; i < cardsToDraw; i++)
             {
@@ -100,6 +107,26 @@ namespace Pantheon.Core.Combat
         public void GainBlock(int amount)
         {
             CurrentBlock += amount;
+        }
+
+        public void GainStrength(int amount)
+        {
+            Strength += amount;
+        }
+
+        public void ApplyExposed(int amount)
+        {
+            Exposed += amount;
+        }
+
+        public void ApplyDrained(int amount)
+        {
+            Drained += amount;
+        }
+
+        public void ApplySundered(int amount)
+        {
+            Sundered += amount;
         }
 
         public void TakeDamage(int amount)
