@@ -136,6 +136,13 @@ namespace Pantheon.Core.Combat
             Volley += amount;
         }
 
+        public int ConsumeVolley()
+        {
+            var consumed = Volley;
+            Volley = 0;
+            return consumed;
+        }
+
         public void TakeDamage(int amount)
         {
             var blocked = System.Math.Min(amount, CurrentBlock);

@@ -24,6 +24,48 @@ namespace Pantheon.Core.Blessings.Artemis
             }, tags: new[] { CardTag.Shot });
         }
 
+        public static Card Nock()
+        {
+            return new Card("Nock", energyCost: 0, CardType.Skill, new CardEffect[]
+            {
+                new GainVolleyEffect(1)
+            });
+        }
+
+        public static Card WarningShot()
+        {
+            return new Card("Warning Shot", energyCost: 1, CardType.Attack, new CardEffect[]
+            {
+                new DealDamageEffect(4),
+                new GainVolleyEffect(1)
+            }, tags: new[] { CardTag.Shot });
+        }
+
+        public static Card SteadyAim()
+        {
+            return new Card("Steady Aim", energyCost: 1, CardType.Skill, new CardEffect[]
+            {
+                new GainVolleyEffect(2),
+                new GainBlockEffect(4)
+            });
+        }
+
+        public static Card CalledShot()
+        {
+            return new Card("Called Shot", energyCost: 2, CardType.Attack, new CardEffect[]
+            {
+                new ConditionalDoubleHitDamageEffect(amount: 6, volleyThreshold: 4)
+            }, tags: new[] { CardTag.Shot });
+        }
+
+        public static Card FullDraw()
+        {
+            return new Card("Full Draw", energyCost: 2, CardType.Attack, new CardEffect[]
+            {
+                new ConsumeVolleyDamageEffect(damagePerPoint: 5)
+            });
+        }
+
         public static IEnumerable<Card> StarterDeck()
         {
             for (var i = 0; i < 5; i++)

@@ -295,6 +295,28 @@ namespace Pantheon.Core.Tests.Combat
         }
 
         [Test]
+        public void ConsumeVolley_ResetsVolleyToZero()
+        {
+            var player = new Player(startingEnergy: 3);
+            player.GainVolley(3);
+
+            player.ConsumeVolley();
+
+            Assert.That(player.Volley, Is.EqualTo(0));
+        }
+
+        [Test]
+        public void ConsumeVolley_ReturnsAmountConsumed()
+        {
+            var player = new Player(startingEnergy: 3);
+            player.GainVolley(3);
+
+            var consumed = player.ConsumeVolley();
+
+            Assert.That(consumed, Is.EqualTo(3));
+        }
+
+        [Test]
         public void StartTurn_StrengthDoesNotDecay()
         {
             var player = new Player(startingEnergy: 3);

@@ -77,6 +77,140 @@ namespace Pantheon.Core.Tests.Blessings.Artemis
         }
 
         [Test]
+        public void Nock_IsSkillWithNoTags()
+        {
+            var card = Core.Blessings.Artemis.ArtemisCards.Nock();
+
+            Assert.That(card.Type, Is.EqualTo(CardType.Skill));
+            Assert.That(card.Tags.Count, Is.EqualTo(0));
+        }
+
+        [Test]
+        public void Nock_GrantsOneVolley()
+        {
+            var player = new Player(startingEnergy: 1);
+            var enemy = new Enemy(maxHP: 42);
+            var card = Core.Blessings.Artemis.ArtemisCards.Nock();
+            player.AddToDrawPile(new[] { card });
+            player.StartTurn(cardsToDraw: 1);
+
+            CombatResolver.PlayCard(player, card, enemy);
+
+            Assert.That(player.Volley, Is.EqualTo(1));
+        }
+
+        [Test]
+        public void WarningShot_IsAttackTaggedShot()
+        {
+            var card = Core.Blessings.Artemis.ArtemisCards.WarningShot();
+
+            Assert.That(card.Type, Is.EqualTo(CardType.Attack));
+            Assert.That(card.Tags.Contains(CardTag.Shot), Is.True);
+        }
+
+        [Test]
+        public void WarningShot_DealsDamageAndGrantsVolley()
+        {
+            var player = new Player(startingEnergy: 1);
+            var enemy = new Enemy(maxHP: 42);
+            var card = Core.Blessings.Artemis.ArtemisCards.WarningShot();
+            player.AddToDrawPile(new[] { card });
+            player.StartTurn(cardsToDraw: 1);
+
+            CombatResolver.PlayCard(player, card, enemy);
+
+            Assert.That(enemy.CurrentHP, Is.EqualTo(38));
+            Assert.That(player.Volley, Is.EqualTo(1));
+        }
+
+        [Test]
+        public void SteadyAim_IsSkillWithNoTags()
+        {
+            var card = Core.Blessings.Artemis.ArtemisCards.SteadyAim();
+
+            Assert.That(card.Type, Is.EqualTo(CardType.Skill));
+            Assert.That(card.Tags.Count, Is.EqualTo(0));
+        }
+
+        [Test]
+        public void SteadyAim_GrantsVolleyAndBlock()
+        {
+            var player = new Player(startingEnergy: 1);
+            var enemy = new Enemy(maxHP: 42);
+            var card = Core.Blessings.Artemis.ArtemisCards.SteadyAim();
+            player.AddToDrawPile(new[] { card });
+            player.StartTurn(cardsToDraw: 1);
+
+            CombatResolver.PlayCard(player, card, enemy);
+
+            Assert.That(player.Volley, Is.EqualTo(2));
+            Assert.That(player.CurrentBlock, Is.EqualTo(4));
+        }
+
+        [Test]
+        public void CalledShot_IsAttackTaggedShot()
+        {
+            var card = Core.Blessings.Artemis.ArtemisCards.CalledShot();
+
+            Assert.That(card.Type, Is.EqualTo(CardType.Attack));
+            Assert.That(card.Tags.Contains(CardTag.Shot), Is.True);
+        }
+
+        [Test]
+        public void CalledShot_VolleyBelowFour_DealsSingleHit()
+        {
+            var player = new Player(startingEnergy: 2);
+            var enemy = new Enemy(maxHP: 42);
+            var card = Core.Blessings.Artemis.ArtemisCards.CalledShot();
+            player.AddToDrawPile(new[] { card });
+            player.StartTurn(cardsToDraw: 1);
+
+            CombatResolver.PlayCard(player, card, enemy);
+
+            Assert.That(enemy.CurrentHP, Is.EqualTo(36));
+        }
+
+        [Test]
+        public void CalledShot_VolleyFourOrHigher_DealsDoubleHit()
+        {
+            var player = new Player(startingEnergy: 2);
+            var enemy = new Enemy(maxHP: 42);
+            var card = Core.Blessings.Artemis.ArtemisCards.CalledShot();
+            player.AddToDrawPile(new[] { card });
+            player.StartTurn(cardsToDraw: 1);
+            player.GainVolley(4);
+
+            CombatResolver.PlayCard(player, card, enemy);
+
+            Assert.That(enemy.CurrentHP, Is.EqualTo(30));
+        }
+
+        [Test]
+        public void FullDraw_IsAttackWithNoTags()
+        {
+            var card = Core.Blessings.Artemis.ArtemisCards.FullDraw();
+
+            Assert.That(card.Type, Is.EqualTo(CardType.Attack));
+            Assert.That(card.Tags.Count, Is.EqualTo(0));
+        }
+
+        [Test]
+        public void FullDraw_ConsumesVolleyForScaledDamage()
+        {
+            var player = new Player(startingEnergy: 2);
+            var enemy = new Enemy(maxHP: 42);
+            var card = Core.Blessings.Artemis.ArtemisCards.FullDraw();
+            player.AddToDrawPile(new[] { card });
+            player.StartTurn(cardsToDraw: 1);
+            player.GainVolley(3);
+
+            CombatResolver.PlayCard(player, card, enemy);
+
+            Assert.That(enemy.CurrentHP, Is.EqualTo(27));
+            Assert.That(player.Volley, Is.EqualTo(0));
+        }
+
+        [Test]
         public void StarterDeck_ReturnsTenCards()
         {
             var deck = Core.Blessings.Artemis.ArtemisCards.StarterDeck().ToList();
