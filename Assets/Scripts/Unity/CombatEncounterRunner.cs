@@ -15,7 +15,7 @@ namespace Pantheon.Unity
         {
             var player = new Player(startingEnergy: 3, startingHP: 70, new SystemRandom());
             var enemy = new Enemy(maxHP: 42, attackDamage: 10);
-            _quickShot = new Card("Quick Shot", energyCost: 1, damageAmount: 6);
+            _quickShot = Card.Attack("Quick Shot", energyCost: 1, damage: 6);
 
             player.AddToDrawPile(new[] { _quickShot });
             player.StartTurn(cardsToDraw: 1);

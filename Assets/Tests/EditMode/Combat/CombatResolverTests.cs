@@ -12,7 +12,7 @@ namespace Pantheon.Core.Tests.Combat
         {
             var player = new Player(startingEnergy: 1);
             var enemy = new Enemy(maxHP: 42);
-            var quickShot = new Card("Quick Shot", energyCost: 1, damageAmount: 6);
+            var quickShot = Card.Attack("Quick Shot", energyCost: 1, damage: 6);
             player.AddToDrawPile(new[] { quickShot });
             player.StartTurn(cardsToDraw: 1);
 
@@ -26,7 +26,7 @@ namespace Pantheon.Core.Tests.Combat
         {
             var player = new Player(startingEnergy: 3);
             var enemy = new Enemy(maxHP: 42);
-            var quickShot = new Card("Quick Shot", energyCost: 1, damageAmount: 6);
+            var quickShot = Card.Attack("Quick Shot", energyCost: 1, damage: 6);
             player.AddToDrawPile(new[] { quickShot });
             player.StartTurn(cardsToDraw: 1);
 
@@ -40,7 +40,7 @@ namespace Pantheon.Core.Tests.Combat
         {
             var player = new Player(startingEnergy: 0);
             var enemy = new Enemy(maxHP: 42);
-            var quickShot = new Card("Quick Shot", energyCost: 1, damageAmount: 6);
+            var quickShot = Card.Attack("Quick Shot", energyCost: 1, damage: 6);
             player.AddToDrawPile(new[] { quickShot });
             player.StartTurn(cardsToDraw: 1);
 
@@ -53,7 +53,7 @@ namespace Pantheon.Core.Tests.Combat
         {
             var player = new Player(startingEnergy: 1);
             var enemy = new Enemy(maxHP: 42);
-            var quickShot = new Card("Quick Shot", energyCost: 1, damageAmount: 6);
+            var quickShot = Card.Attack("Quick Shot", energyCost: 1, damage: 6);
             player.AddToDrawPile(new[] { quickShot });
             player.StartTurn(cardsToDraw: 1);
 
@@ -67,7 +67,7 @@ namespace Pantheon.Core.Tests.Combat
         {
             var player = new Player(startingEnergy: 1);
             var enemy = new Enemy(maxHP: 42);
-            var quickShot = new Card("Quick Shot", energyCost: 1, damageAmount: 6);
+            var quickShot = Card.Attack("Quick Shot", energyCost: 1, damage: 6);
             player.AddToDrawPile(new[] { quickShot });
             player.StartTurn(cardsToDraw: 1);
 
@@ -81,7 +81,7 @@ namespace Pantheon.Core.Tests.Combat
         {
             var player = new Player(startingEnergy: 3);
             var enemy = new Enemy(maxHP: 42);
-            var phantomCard = new Card("Phantom Card", energyCost: 1, damageAmount: 6);
+            var phantomCard = Card.Attack("Phantom Card", energyCost: 1, damage: 6);
 
             Assert.Throws<InvalidOperationException>(() => CombatResolver.PlayCard(player, phantomCard, enemy));
             Assert.That(enemy.CurrentHP, Is.EqualTo(42));
@@ -93,7 +93,7 @@ namespace Pantheon.Core.Tests.Combat
         {
             var player = new Player(startingEnergy: 1);
             var enemy = new Enemy(maxHP: 42);
-            var sideStep = new Card("Side Step", energyCost: 1, damageAmount: 0, blockAmount: 5);
+            var sideStep = Card.Skill("Side Step", energyCost: 1, block: 5);
             player.AddToDrawPile(new[] { sideStep });
             player.StartTurn(cardsToDraw: 1);
 
@@ -107,7 +107,7 @@ namespace Pantheon.Core.Tests.Combat
         {
             var player = new Player(startingEnergy: 1);
             var enemy = new Enemy(maxHP: 42);
-            var sideStep = new Card("Side Step", energyCost: 1, damageAmount: 0, blockAmount: 5);
+            var sideStep = Card.Skill("Side Step", energyCost: 1, block: 5);
             player.AddToDrawPile(new[] { sideStep });
             player.StartTurn(cardsToDraw: 1);
 
@@ -146,7 +146,7 @@ namespace Pantheon.Core.Tests.Combat
             var player = new Player(startingEnergy: 1);
             player.GainStrength(3);
             var enemy = new Enemy(maxHP: 42);
-            var quickShot = new Card("Quick Shot", energyCost: 1, damageAmount: 6);
+            var quickShot = Card.Attack("Quick Shot", energyCost: 1, damage: 6);
             player.AddToDrawPile(new[] { quickShot });
             player.StartTurn(cardsToDraw: 1);
 
@@ -160,7 +160,7 @@ namespace Pantheon.Core.Tests.Combat
         {
             var player = new Player(startingEnergy: 1);
             var enemy = new Enemy(maxHP: 42);
-            var strike = new Card("Strike", energyCost: 1, damageAmount: 8);
+            var strike = Card.Attack("Strike", energyCost: 1, damage: 8);
             player.AddToDrawPile(new[] { strike });
             player.StartTurn(cardsToDraw: 1);
             player.ApplyDrained(1);
@@ -176,7 +176,7 @@ namespace Pantheon.Core.Tests.Combat
             var player = new Player(startingEnergy: 1);
             var enemy = new Enemy(maxHP: 42);
             enemy.ApplyExposed(1);
-            var strike = new Card("Strike", energyCost: 1, damageAmount: 8);
+            var strike = Card.Attack("Strike", energyCost: 1, damage: 8);
             player.AddToDrawPile(new[] { strike });
             player.StartTurn(cardsToDraw: 1);
 
@@ -191,7 +191,7 @@ namespace Pantheon.Core.Tests.Combat
             var player = new Player(startingEnergy: 1);
             player.GainStrength(3);
             var enemy = new Enemy(maxHP: 42);
-            var sideStep = new Card("Side Step", energyCost: 1, damageAmount: 0, blockAmount: 5);
+            var sideStep = Card.Skill("Side Step", energyCost: 1, block: 5);
             player.AddToDrawPile(new[] { sideStep });
             player.StartTurn(cardsToDraw: 1);
 
@@ -205,7 +205,7 @@ namespace Pantheon.Core.Tests.Combat
         {
             var player = new Player(startingEnergy: 1);
             var enemy = new Enemy(maxHP: 42);
-            var sideStep = new Card("Side Step", energyCost: 1, damageAmount: 0, blockAmount: 8);
+            var sideStep = Card.Skill("Side Step", energyCost: 1, block: 8);
             player.AddToDrawPile(new[] { sideStep });
             player.StartTurn(cardsToDraw: 1);
             player.ApplySundered(1);
@@ -221,7 +221,7 @@ namespace Pantheon.Core.Tests.Combat
             var player = new Player(startingEnergy: 1);
             player.ApplySundered(2);
             var enemy = new Enemy(maxHP: 42);
-            var quickShot = new Card("Quick Shot", energyCost: 1, damageAmount: 6);
+            var quickShot = Card.Attack("Quick Shot", energyCost: 1, damage: 6);
             player.AddToDrawPile(new[] { quickShot });
             player.StartTurn(cardsToDraw: 1);
 
