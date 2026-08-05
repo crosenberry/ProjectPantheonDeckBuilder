@@ -122,7 +122,7 @@ Design reasoning: pure chance-to-fail is the obvious reading of "high risk," but
 | **Bold Offering** | Higher Essence cost + lose a fixed chunk of **current** HP (not max) | Guaranteed, stronger skill upgrade. No randomness — the cost is HP you must be healthy enough to spend right now, so it's a real in-the-moment decision, not a permanent tax. |
 | **Defiant Offering** | Highest Essence cost | Coin-flip (exact odds TBD in tuning). Success: strongest-tier skill upgrade, noticeably better than Bold. Failure: lose the Essence spent and gain 1 **Curse** card in your deck. |
 
-- Introduces **Curse cards** as a formal piece of the base combat vocabulary (dead-weight cards that clog the hand/deck, standard genre convention) — needs folding into the "assumed base combat vocabulary" note alongside Block/Strength/Vulnerable/Weak/Frail/Exhaust (see [Thor-FullCardDraft.md](Characters/Thor-FullCardDraft.md)) next time that list is formalized.
+- Introduces **Curse cards** as a formal piece of the base combat vocabulary (dead-weight cards that clog the hand/deck, standard genre convention) — needs folding into the "assumed base combat vocabulary" note alongside Block/Strength/Exposed/Drained/Sundered/Exhaust (see [Thor-FullCardDraft.md](Characters/Thor-FullCardDraft.md)) next time that list is formalized.
 - Now that trial mythology is fully randomized (independent of stage), it's a *stronger* natural gate for a **Syncretism** unlock than the stage-mythology approach was — see [DifferentiationHooks.md §Hook 1](DifferentiationHooks.md). A player can stumble into an altar of a different mythology than their own Blessing on any stage, not only by deliberately traveling to a foreign-mythology stage, so this becomes a frequent, low-commitment touchpoint for Syncretism rather than a rare one gated behind a whole stage completion. Not required for the trial to function, but worth keeping in mind as a second use for the same node rather than building a separate trigger for Syncretism later.
 - **[OPEN]**: exact numeric costs and Defiant's success odds — rule shape is settled, numbers need tuning once enough of the run's economy (Essence income rate, HP totals) is defined to tune against.
 
@@ -224,10 +224,10 @@ Formalizes terminology that's been used implicitly across all four Blessing card
 **Combat stats & statuses**:
 - **Block**: prevents damage 1:1. Expires at the start of the player's next turn by default — cards that preserve it (e.g. Thor's Unbreakable) call that out explicitly as an exception, which is what confirms this is the baseline rule rather than an inconsistency.
 - **Strength**: +1 damage per stack to Attacks. Persists for the whole combat with no natural decay, unless a card says otherwise.
-- **Vulnerable** (debuff): +50% damage taken from Attacks. Decrements by 1 at the start of the afflicted's turn.
-- **Weak** (debuff): -25% damage dealt. Decrements by 1 at the start of the afflicted's turn.
-- **Frail** (debuff): -25% Block gained from Skills. Decrements by 1 at the start of the afflicted's turn.
-- **Cleanse**: removes a stated number (or "all") of the afflicted's debuffs — Vulnerable/Weak/Frail and similar status effects. Does **not** remove Curse cards from the deck; that's a separate system (card removal, sold at the Shop — §7).
+- **Exposed** (debuff, formerly named "Vulnerable" — renamed in the [M1 design session](ImplementationRoadmap.md#design-session-log), same effect): +50% damage taken from Attacks. Decrements by 1 at the start of the afflicted's turn.
+- **Drained** (debuff, formerly "Weak"): -25% damage dealt. Decrements by 1 at the start of the afflicted's turn.
+- **Sundered** (debuff, formerly "Frail"): -25% Block gained from Skills. Decrements by 1 at the start of the afflicted's turn.
+- **Cleanse**: removes a stated number (or "all") of the afflicted's debuffs — Exposed/Drained/Sundered and similar status effects. Does **not** remove Curse cards from the deck; that's a separate system (card removal, sold at the Shop — §7). Universal names used regardless of which mythology's card or enemy applies them — only mythology-flavored card *text* varies, not the underlying status name (e.g., a future Burn/Shock-style debuff tied to specific enemy types would be a genuinely new, additional status, not a reskin of these three).
 
 **Deck-level mechanics**:
 - **Exhaust**: when a card marked Exhaust is played, it's removed from the deck for the remainder of the current combat (returns for the next one).

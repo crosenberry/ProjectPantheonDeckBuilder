@@ -18,3 +18,9 @@ Never commit directly to `main` or `develop`. All work happens on a `feature/<sh
 4. `develop` is promoted to `main` only at a stable milestone the user calls out explicitly — never automatically.
 
 Confirm the current branch (`git branch --show-current`) before writing code; if it's `main` or `develop`, stop and create the feature branch first rather than committing there. Only push directly, and only ever commit, when the user has asked for it — this rule governs *which branch*, not a standing permission to commit unprompted.
+
+## Non-negotiable: design session before implementation
+
+The full milestone sequence, main-promotion policy, and design-session log live in `Docs/ImplementationRoadmap.md` — read it before starting new scope.
+
+Before implementing a new milestone's code (not before every slice — before the milestone), hold a design session covering terminology and mythology-lore tailoring for whatever that milestone introduces. Never hardcode a generic or placeholder name into `Pantheon.Core` (enums, method names, card text) expecting to rename it later — renames after the fact touch every call site and every test. Numeric tuning is a separate, later concern (deferred until real playtesting, per `Docs/DifferentiationHooks.md`) — a design session decides what something is called and how it reads in-fiction, not whether 50% is the right number.

@@ -32,7 +32,7 @@ Introduces threat-prioritization: is the debuffer worth killing first, or is it 
 | | |
 |---|---|
 | HP | 30 |
-| Intent A | Shriek — apply 2 Weak to the player. No damage. |
+| Intent A | Shriek — apply 2 Drained to the player. No damage. |
 | Intent B | Claw — deal 6 damage. |
 
 ## Viper Brood (pack unit — spawns 2-3 per encounter)
@@ -46,7 +46,7 @@ Introduces multi-target decision-making and racing down small HP pools before th
 
 ## Sanity Checks
 
-**Covers the core intent patterns a combat system needs to prove out**: pure damage sponge (Dummy), attack/defend alternation (Hoplite), debuff application (Harpy), and multi-enemy encounters (Viper Brood) — enough variety to exercise Artemis's Volley mechanic and both her Block- and debuff-interacting cards (e.g., Point-Blank's Vulnerable-into-Weak synergy) without needing a full roster.
+**Covers the core intent patterns a combat system needs to prove out**: pure damage sponge (Dummy), attack/defend alternation (Hoplite), debuff application (Harpy), and multi-enemy encounters (Viper Brood) — enough variety to exercise Artemis's Volley mechanic and both her Block- and debuff-interacting cards (e.g., Point-Blank's Exposed-into-Drained synergy) without needing a full roster.
 
 **Deliberately not included**: a boss, elemental/status-heavy enemies, anything that reads or manipulates the player's Volley (that's Hook 2 territory — [DifferentiationHooks.md](../DifferentiationHooks.md) — and stays out of scope until the full enemy/boss design pass happens post-playtesting, per the peer-feedback plan).
 

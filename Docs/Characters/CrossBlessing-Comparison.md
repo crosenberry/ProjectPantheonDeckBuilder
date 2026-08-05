@@ -19,7 +19,7 @@ Verdict: these are four genuinely different shapes, not reskins. Volley vs. Stor
 
 This is the more interesting finding: the *source* of the "3 build paths" differed per Blessing, which is a good sign — it means the pillar isn't being satisfied the same mechanical way four times.
 
-- **Artemis / Thor**: diversity needed a deliberate 3rd path bolted on that mostly ignores the mechanic (Huntress, Unrelenting), leaning on raw stats or a different keyword (Vulnerable, Strength) instead.
+- **Artemis / Thor**: diversity needed a deliberate 3rd path bolted on that mostly ignores the mechanic (Huntress, Unrelenting), leaning on raw stats or a different keyword (Exposed, Strength) instead.
 - **Anubis**: diversity is free — it falls straight out of Scale having two poles and a middle. Chaos-lean, Order-lean, and Balanced aren't three paths bolted onto one mechanic, they're three ways of using the *same* mechanic.
 - **Sun Wukong**: diversity is also close to free, but via a different mechanism — 3 discrete states naturally produce "commit to Beast," "commit to Immortal," and "the switching itself is the payoff" (72 Changes), without needing an ignore-it path.
 

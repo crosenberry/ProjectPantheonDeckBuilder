@@ -49,7 +49,7 @@ The Unbroken Nock differs in kind from base-pool Full Draw (which is pure one-tu
 | Node | Cost | Effect |
 |---|---|---|
 | Marked for the Hunt | 60 | The first enemy you damage each combat is marked: it takes +2 damage from all your Attacks for the rest of combat. |
-| Hunter's Reflex (choice pair) | 90 | Pick one, freely toggle between runs: **(A)** Apex Predator-type effects (bonus damage vs. low-HP enemies) trigger at 60% HP instead of 50%. **(B)** Whenever you apply Vulnerable, also apply 1 Weak. |
+| Hunter's Reflex (choice pair) | 90 | Pick one, freely toggle between runs: **(A)** Apex Predator-type effects (bonus damage vs. low-HP enemies) trigger at 60% HP instead of 50%. **(B)** Whenever you apply Exposed, also apply 1 Drained. |
 | Silent Step | 110 | The first Attack you play against a full-HP enemy each combat deals +3 damage. |
 | **One Perfect Shot** (Mythic capstone) | 200 | New card unlocked into the Huntress card pool: *Attack, Shot, 2 Energy — Deal damage equal to 50% of the target's current HP (minimum 10, maximum 40).* |
 

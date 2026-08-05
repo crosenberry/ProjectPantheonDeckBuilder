@@ -21,21 +21,21 @@ Signature card deliberately teaches the "choice" identity of Scale from turn one
 | Name | Type | Cost | Effect |
 |---|---|---|---|
 | Anoint | Skill | 1 | Heal 3 HP. Scale +1. |
-| Curse of the Damned | Attack | 1 | Deal 6 damage. Apply 1 Weak. Scale -1. |
+| Curse of the Damned | Attack | 1 | Deal 6 damage. Apply 1 Drained. Scale -1. |
 | Twin Rites | Skill | 1 | Gain 4 Block. Choose one: Scale +1 or Scale -1. |
 | Embalmer's Touch | Skill | 0 | Heal 2 HP. Scale +1. |
 | Sandstorm Jab | Attack | 1 | Deal 5 damage. Scale -1. |
 | Even Keel | Skill | 1 | Draw 1 card. If Scale is between -1 and +1, draw 1 additional card. |
-| Ma'at's Feather | Attack | 1 | Deal 4 damage. If Scale is between -1 and +1, apply 1 Vulnerable. |
+| Ma'at's Feather | Attack | 1 | Deal 4 damage. If Scale is between -1 and +1, apply 1 Exposed. |
 
 ### Reaper (7)
 
 | Name | Type | Cost | Effect |
 |---|---|---|---|
-| Plague Bearer | Attack | 1 | Deal 5 damage. Apply 1 Weak. Scale -1. |
+| Plague Bearer | Attack | 1 | Deal 5 damage. Apply 1 Drained. Scale -1. |
 | Locust Swarm | Attack | 1 | Deal 3 damage to ALL enemies. Scale -1. |
 | Ammit's Hunger | Attack | 1 | Deal 7 damage. Scale -1. |
-| Withering Curse | Skill | 1 | Apply 2 Weak. Scale -2. |
+| Withering Curse | Skill | 1 | Apply 2 Drained. Scale -2. |
 | Chaos Rite | Skill | 0 | Lose 2 HP. Scale -2. |
 | Sekhmet's Wrath | Attack | 2 | Deal 10 damage. Scale -1. |
 | Serpent's Bite | Attack | 1 | Deal 5 damage. If Scale is negative, deal 3 additional damage. |
@@ -61,7 +61,7 @@ Signature card deliberately teaches the "choice" identity of Scale from turn one
 | Tomb Guardian's Stance | Skill | 1 | Gain 8 Block. |
 | Twin Strike | Attack | 1 | Deal 4 damage twice. |
 | Book of the Dead | Skill | 1 | Look at the top 3 cards of your draw pile. Put any number into your discard pile. |
-| Desert Wind | Attack | 1 | Deal 6 damage. Apply 1 Frail. |
+| Desert Wind | Attack | 1 | Deal 6 damage. Apply 1 Sundered. |
 | Canopic Reserve | Skill | 1 | Gain 6 Block. Draw 1 card. |
 
 ## Uncommon (30)
@@ -75,21 +75,21 @@ Signature card deliberately teaches the "choice" identity of Scale from turn one
 | Scale-Tipper | Skill | 1 | Set Scale to 0. Draw 2 cards. |
 | Judged Strike | Attack | 2 | Deal 9 damage. If Scale is between -1 and +1, this hits twice. |
 | Harmonize | Skill | 1 | Choose one: Scale +2 or Scale -2. Gain 6 Block. |
-| Twin Judgment | Attack | 1 | Deal 4 damage twice. If Scale is between -1 and +1, apply 1 Vulnerable. |
+| Twin Judgment | Attack | 1 | Deal 4 damage twice. If Scale is between -1 and +1, apply 1 Exposed. |
 | Sekhem's Insight | Skill | 1 | Draw 1 card. If Scale is between -1 and +1, draw 1 additional card and heal 2 HP. |
 
 ### Reaper (8)
 
 | Name | Type | Cost | Effect |
 |---|---|---|---|
-| Curse Weaver | Power | 1 | Whenever Scale becomes more negative, apply 1 Weak to a random enemy. |
+| Curse Weaver | Power | 1 | Whenever Scale becomes more negative, apply 1 Drained to a random enemy. |
 | Void Rite | Skill | 1 | Scale -3. Draw 2 cards. |
-| Apep's Coil | Attack | 2 | Deal 8 damage. If Scale is negative, apply Vulnerable equal to how negative it is. |
+| Apep's Coil | Attack | 2 | Deal 8 damage. If Scale is negative, apply Exposed equal to how negative it is. |
 | Ammit's Bargain | Skill | 0 | Lose 4 HP. Scale -3. Exhaust. |
 | Chaosbound Strike | Attack | 1 | Deal 6 damage. If Scale is -3 or lower, deal 6 additional damage. |
 | Plague of Locusts | Attack | 2 | Deal 5 damage to ALL enemies. Scale -2. |
 | Set's Fury | Power | 2 | Whenever Scale is negative at the start of your turn, gain 2 Strength. |
-| Withering Grasp | Attack | 1 | Deal 5 damage. Apply 1 Frail. Scale -1. |
+| Withering Grasp | Attack | 1 | Deal 5 damage. Apply 1 Sundered. Scale -1. |
 
 ### Ascendant (8)
 
@@ -101,7 +101,7 @@ Signature card deliberately teaches the "choice" identity of Scale from turn one
 | Sunlit Bulwark | Skill | 1 | Gain 6 Block. If Scale is 3 or higher, gain 6 additional Block. |
 | Sacred Order | Power | 2 | Whenever Scale is positive at the start of your turn, gain 2 Block. |
 | Ankh Everlasting | Skill | 2 | Heal 6 HP. Cleanse all debuffs. Scale +2. |
-| Ma'at's Decree | Attack | 2 | Deal 8 damage. Apply 2 Weak. Scale +1. |
+| Ma'at's Decree | Attack | 2 | Deal 8 damage. Apply 2 Drained. Scale +1. |
 | Guardian's Rite | Skill | 1 | Gain 5 Block. Scale +2. |
 
 ### Flex (7)
@@ -130,7 +130,7 @@ Signature card deliberately teaches the "choice" identity of Scale from turn one
 
 | Name | Type | Cost | Effect |
 |---|---|---|---|
-| Devourer's Toll | Attack | 2 | Deal damage equal to 3 × \|Scale\| to one enemy. If Scale is negative, also apply Vulnerable equal to \|Scale\|. |
+| Devourer's Toll | Attack | 2 | Deal damage equal to 3 × \|Scale\| to one enemy. If Scale is negative, also apply Exposed equal to \|Scale\|. |
 | Apep's Awakening | Power | 3 | Whenever Scale becomes more negative, deal 2 damage to a random enemy. |
 | Ammit's Judgment | Attack | 3 | If Scale is negative, set it to 0: deal 6 damage per point consumed. |
 | Herald of Chaos | Skill | 2 | Scale -5. Gain 3 Strength. Exhaust. |

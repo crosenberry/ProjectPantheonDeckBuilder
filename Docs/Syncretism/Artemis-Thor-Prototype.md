@@ -22,7 +22,7 @@ This keeps the fusion layer cheap to scale: it's a ~5-card bolt-on per pairing, 
 
 ## Shape 2 — Card + Relic Evolution (example, closest to VS's actual mechanic)
 
-Artemis's starter card **Hunter's Mark** (Attack: deal 8 damage, apply 2 Vulnerable), while **Stormheart Band** is held, permanently upgrades in your deck (once, on pickup, same moment the relic-fusion above would trigger if both relics are present — this and Shape 1 aren't meant to double-stack in the same prototype, just two different shapes being tested independently) into **Hunter's Mark+: Thunderstruck**: deal 8 damage, apply 2 Vulnerable, gain 2 Storm.
+Artemis's starter card **Hunter's Mark** (Attack: deal 8 damage, apply 2 Exposed), while **Stormheart Band** is held, permanently upgrades in your deck (once, on pickup, same moment the relic-fusion above would trigger if both relics are present — this and Shape 1 aren't meant to double-stack in the same prototype, just two different shapes being tested independently) into **Hunter's Mark+: Thunderstruck**: deal 8 damage, apply 2 Exposed, gain 2 Storm.
 
 ## Shape 3 — Resource Interaction Cards (the deep test)
 

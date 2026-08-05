@@ -2,7 +2,7 @@
 
 Second deep pass, after [Artemis](Artemis-CardDraft.md). Supersedes the earlier [Thor-CardSketch.md](Thor-CardSketch.md) (kept for history) — every card from the sketch is carried forward here, expanded to full depth. Purpose per the [cross-Blessing recommendation](CrossBlessing-Comparison.md): confirm "similar resource shape, different timing" (Storm vs. Artemis's Volley) actually plays different at full 75-card scale, not just in a 6-card sample.
 
-Combat vocabulary used throughout below (Block, Strength, Vulnerable, Weak, Frail, Exhaust, Curse, Energy, draw rules) is now formalized in [GameDesignDocument.md §10](../GameDesignDocument.md).
+Combat vocabulary used throughout below (Block, Strength, Exposed, Drained, Sundered, Exhaust, Curse, Energy, draw rules) is now formalized in [GameDesignDocument.md §10](../GameDesignDocument.md).
 
 Recap: **Storm** persists across turns. Block-generating cards grant it as a side effect. Payoff cards discharge banked Storm for burst damage or other effects. Three archetypes established in the sketch, kept as the organizing spine here: **Bulwark** (turtle, then release), **Chain** (small discharge every turn, tempo), **Unrelenting** (Storm-light, HP-for-power berserker). A **Flex** tag marks cards any Thor build reasonably wants regardless of archetype.
 
@@ -57,12 +57,12 @@ Recap: **Storm** persists across turns. Block-generating cards grant it as a sid
 
 | Name | Type | Cost | Effect |
 |---|---|---|---|
-| Runic Strike | Attack | 1 | Deal 6 damage. Apply 1 Vulnerable if this is the first card you've played this turn. |
+| Runic Strike | Attack | 1 | Deal 6 damage. Apply 1 Exposed if this is the first card you've played this turn. |
 | Battle Focus | Skill | 1 | Draw 2 cards. |
 | Iron Resolve | Skill | 1 | Gain 8 Block. |
 | Twin Axe | Attack | 1 | Deal 4 damage twice. |
 | Norn's Insight | Skill | 1 | Look at the top 3 cards of your draw pile. Put any number of them into your discard pile. |
-| Frost Bite | Attack | 1 | Deal 5 damage. Apply 1 Frail. |
+| Frost Bite | Attack | 1 | Deal 5 damage. Apply 1 Sundered. |
 
 ## Uncommon (30)
 
@@ -75,7 +75,7 @@ Recap: **Storm** persists across turns. Block-generating cards grant it as a sid
 | Storm Bastion | Power | 2 | At the start of your turn, gain 4 Block. |
 | Unbreakable | Skill | 1 | Gain 6 Block. This Block does not expire at the start of your next turn. |
 | Thunderous Retort | Attack | 2 | Deal damage equal to your current Block. |
-| Frostwall | Skill | 2 | Gain 10 Block. Apply 2 Vulnerable to ALL enemies. |
+| Frostwall | Skill | 2 | Gain 10 Block. Apply 2 Exposed to ALL enemies. |
 | Runed Shield | Power | 2 | Storm-generating cards grant 2 additional Block when played. |
 | Valkyrie's Ward | Skill | 3 | Gain 20 Block. Gain 5 Storm. |
 
@@ -101,18 +101,18 @@ Recap: **Storm** persists across turns. Block-generating cards grant it as a sid
 | Undying Fury | Power | 2 | Whenever you end your turn below 50% HP, deal 5 damage to a random enemy. |
 | Feral Roar | Attack | 2 | Deal 12 damage. Gain 2 Strength. |
 | Last Stand | Skill | 1 | Gain Block equal to the damage you've taken this combat, up to 15. |
-| Wolfsbane Strike | Attack | 1 | Deal 8 damage. If you are below 50% HP, apply 2 Weak. |
+| Wolfsbane Strike | Attack | 1 | Deal 8 damage. If you are below 50% HP, apply 2 Drained. |
 
 ### Flex (8)
 
 | Name | Type | Cost | Effect |
 |---|---|---|---|
 | Bifrost Step | Skill | 1 | Draw 2 cards. Gain 1 Storm. |
-| Rune of Binding | Attack | 1 | Deal 7 damage. Apply 1 Vulnerable. |
+| Rune of Binding | Attack | 1 | Deal 7 damage. Apply 1 Exposed. |
 | Oathkeeper's Strike | Attack | 2 | Deal 10 damage. Gain 2 Storm. |
 | Ravens' Sight | Skill | 1 | Look at the top 3 cards of your draw pile. Put any number of them into your discard pile. |
 | Ironclad Focus | Power | 1 | At the start of your turn, gain 1 Strength or 1 Storm (your choice). |
-| Ember Rune | Attack | 1 | Deal 6 damage. Apply 1 Weak. |
+| Ember Rune | Attack | 1 | Deal 6 damage. Apply 1 Drained. |
 | Stormcaller's Bond | Skill | 1 | Gain 2 Storm. Gain 3 Block. |
 | Yggdrasil's Root | Power | 2 | Whenever you play a Power, gain 2 Storm. |
 
