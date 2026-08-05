@@ -9,7 +9,7 @@ Recap: **Scale** is a signed value (-5 to +5, Order/+ vs. Chaos/-), resets to 0 
 ## Baseline (not archetype-specific)
 
 - **Anoint** — Skill (Common), 1 Energy: Heal 3 HP. Scale +1.
-- **Curse of the Damned** — Attack (Common), 1 Energy: Deal 6 damage. Apply 1 Weak. Scale -1.
+- **Curse of the Damned** — Attack (Common), 1 Energy: Deal 6 damage. Apply 1 Drained. Scale -1.
 
 ## Path A — Balance-keeper (hover near 0)
 
@@ -17,7 +17,7 @@ Recap: **Scale** is a signed value (-5 to +5, Order/+ vs. Chaos/-), resets to 0 
 
 ## Path B — Reaper (push toward Chaos, -)
 
-- **Devourer's Toll** — Attack (Rare), 2 Energy: Deal damage equal to 3× |Scale| to one enemy. If Scale is negative, also apply Vulnerable equal to |Scale|.
+- **Devourer's Toll** — Attack (Rare), 2 Energy: Deal damage equal to 3× |Scale| to one enemy. If Scale is negative, also apply Exposed equal to |Scale|.
 
 ## Path C — Ascendant (push toward Order, +)
 

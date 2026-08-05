@@ -23,6 +23,7 @@ namespace Pantheon.Core.Combat
                 return;
             }
 
+            Enemy.StartTurn();
             CombatResolver.EnemyAttack(Enemy, Player);
 
             if (Player.CurrentHP <= 0)

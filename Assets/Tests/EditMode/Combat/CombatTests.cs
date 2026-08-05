@@ -55,5 +55,32 @@ namespace Pantheon.Core.Tests.Combat
 
             Assert.That(combat.Outcome, Is.EqualTo(CombatOutcome.InProgress));
         }
+
+        [Test]
+        public void EndPlayerTurn_EnemyExposedAboveZero_DecrementsAtStartOfEnemyTurn()
+        {
+            var player = new Player(startingEnergy: 3, startingHP: 70, new SystemRandom());
+            var enemy = new Enemy(maxHP: 42, attackDamage: 10);
+            enemy.ApplyExposed(2);
+            var combat = new CombatEncounter(player, enemy);
+
+            combat.EndPlayerTurn();
+
+            Assert.That(enemy.Exposed, Is.EqualTo(1));
+        }
+
+        [Test]
+        public void EndPlayerTurn_EnemyAlreadyDefeated_DoesNotStartEnemyTurn()
+        {
+            var player = new Player(startingEnergy: 3, startingHP: 70, new SystemRandom());
+            var enemy = new Enemy(maxHP: 42, attackDamage: 10);
+            enemy.ApplyExposed(2);
+            enemy.TakeDamage(999);
+            var combat = new CombatEncounter(player, enemy);
+
+            combat.EndPlayerTurn();
+
+            Assert.That(enemy.Exposed, Is.EqualTo(2));
+        }
     }
 }

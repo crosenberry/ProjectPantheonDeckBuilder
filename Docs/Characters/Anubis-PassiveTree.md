@@ -28,7 +28,7 @@ Perfect Balance differs in kind from Scales Eternal (the base pool's Balance-kee
 | Node | Cost | Effect |
 |---|---|---|
 | Bound to Chaos | 60 | If your deck has 3+ Reaper cards, your opening hand each combat always includes at least 1 of them. |
-| Apep's Favor (choice pair) | 90 | Pick one, freely toggle between runs: **(A)** Cards that push Scale negative push it 1 additional point. **(B)** Whenever Scale becomes negative for the first time each turn, apply 1 Weak to a random enemy. |
+| Apep's Favor (choice pair) | 90 | Pick one, freely toggle between runs: **(A)** Cards that push Scale negative push it 1 additional point. **(B)** Whenever Scale becomes negative for the first time each turn, apply 1 Drained to a random enemy. |
 | Devourer's Patience | 110 | If Scale is -3 or lower at the start of your turn, gain 1 Strength. |
 | **Ammit's Feast** (Mythic capstone) | 200 | New card unlocked into the Reaper pool: *Attack, 3 Energy — Scale -2. Deal damage equal to 8 × \|Scale\| (after this reduction) to one enemy.* |
 
