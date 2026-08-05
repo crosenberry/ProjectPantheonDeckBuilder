@@ -41,7 +41,7 @@ namespace Pantheon.Core.Tests.Combat
         public void StartTurn_DrawsRequestedNumberOfCardsFromDrawPile()
         {
             var player = new Player(startingEnergy: 3);
-            var deck = Enumerable.Range(1, 5).Select(i => new Card($"Card {i}", energyCost: 1, damageAmount: 1));
+            var deck = Enumerable.Range(1, 5).Select(i => Card.Attack($"Card {i}", energyCost: 1, damage: 1));
             player.AddToDrawPile(deck);
 
             player.StartTurn(cardsToDraw: 5);
@@ -54,7 +54,7 @@ namespace Pantheon.Core.Tests.Combat
         public void StartTurn_DrawPileHasFewerCardsThanRequested_DrawsOnlyWhatsAvailable()
         {
             var player = new Player(startingEnergy: 3);
-            var deck = Enumerable.Range(1, 2).Select(i => new Card($"Card {i}", energyCost: 1, damageAmount: 1));
+            var deck = Enumerable.Range(1, 2).Select(i => Card.Attack($"Card {i}", energyCost: 1, damage: 1));
             player.AddToDrawPile(deck);
 
             player.StartTurn(cardsToDraw: 5);
@@ -67,7 +67,7 @@ namespace Pantheon.Core.Tests.Combat
         public void EndTurn_MovesHandToDiscardPileAndClearsHand()
         {
             var player = new Player(startingEnergy: 3);
-            var deck = Enumerable.Range(1, 3).Select(i => new Card($"Card {i}", energyCost: 1, damageAmount: 1));
+            var deck = Enumerable.Range(1, 3).Select(i => Card.Attack($"Card {i}", energyCost: 1, damage: 1));
             player.AddToDrawPile(deck);
             player.StartTurn(cardsToDraw: 3);
 
@@ -81,7 +81,7 @@ namespace Pantheon.Core.Tests.Combat
         public void StartTurn_DrawPileEmptyWithCardsInDiscard_ShufflesDiscardIntoDrawPileAndDraws()
         {
             var player = new Player(startingEnergy: 3, new FakeRandom());
-            var deck = Enumerable.Range(1, 3).Select(i => new Card($"Card {i}", energyCost: 1, damageAmount: 1));
+            var deck = Enumerable.Range(1, 3).Select(i => Card.Attack($"Card {i}", energyCost: 1, damage: 1));
             player.AddToDrawPile(deck);
             player.StartTurn(cardsToDraw: 3);
             player.EndTurn();
@@ -97,7 +97,7 @@ namespace Pantheon.Core.Tests.Combat
         public void StartTurn_DrawPileRunsOutMidDraw_ShufflesDiscardAndDrawsRemainder()
         {
             var player = new Player(startingEnergy: 3, new FakeRandom());
-            var deck = Enumerable.Range(1, 5).Select(i => new Card($"Card {i}", energyCost: 1, damageAmount: 1)).ToList();
+            var deck = Enumerable.Range(1, 5).Select(i => Card.Attack($"Card {i}", energyCost: 1, damage: 1)).ToList();
             player.AddToDrawPile(deck);
             player.StartTurn(cardsToDraw: 3);
             player.EndTurn();
@@ -113,7 +113,7 @@ namespace Pantheon.Core.Tests.Combat
         public void StartTurn_TotalCardsAcrossBothPilesLessThanRequested_DrawsAllAvailableCards()
         {
             var player = new Player(startingEnergy: 3, new FakeRandom());
-            var deck = Enumerable.Range(1, 3).Select(i => new Card($"Card {i}", energyCost: 1, damageAmount: 1));
+            var deck = Enumerable.Range(1, 3).Select(i => Card.Attack($"Card {i}", energyCost: 1, damage: 1));
             player.AddToDrawPile(deck);
             player.StartTurn(cardsToDraw: 1);
             player.EndTurn();

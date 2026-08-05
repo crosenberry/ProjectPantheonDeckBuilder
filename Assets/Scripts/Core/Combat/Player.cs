@@ -2,7 +2,7 @@ using System.Collections.Generic;
 
 namespace Pantheon.Core.Combat
 {
-    public class Player
+    public class Player : ICombatant
     {
         private readonly List<Card> _drawPile = new List<Card>();
         private readonly List<Card> _discardPile = new List<Card>();

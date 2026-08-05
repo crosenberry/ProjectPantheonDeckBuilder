@@ -1,6 +1,6 @@
 namespace Pantheon.Core.Combat
 {
-    public class Enemy
+    public class Enemy : ICombatant
     {
         public int MaxHP { get; }
         public int CurrentHP { get; private set; }
