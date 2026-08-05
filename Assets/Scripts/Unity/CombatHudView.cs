@@ -1,3 +1,4 @@
+using Pantheon.Core.Combat;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -7,6 +8,8 @@ namespace Pantheon.Unity
     {
         public CombatEncounterRunner Runner;
         public Text StatusText;
+        public Button PlayQuickShotButton;
+        public Button EndTurnButton;
 
         private void Update()
         {
@@ -22,6 +25,17 @@ namespace Pantheon.Unity
                 $"Player HP: {player.CurrentHP}/{player.MaxHP}  Block: {player.CurrentBlock}  Energy: {player.CurrentEnergy}/{player.MaxEnergy}\n" +
                 $"Enemy HP: {enemy.CurrentHP}/{enemy.MaxHP}\n" +
                 $"Outcome: {Runner.Encounter.Outcome}";
+
+            var combatActive = Runner.Encounter.Outcome == CombatOutcome.InProgress;
+            if (PlayQuickShotButton != null)
+            {
+                PlayQuickShotButton.interactable = combatActive;
+            }
+
+            if (EndTurnButton != null)
+            {
+                EndTurnButton.interactable = combatActive;
+            }
         }
     }
 }

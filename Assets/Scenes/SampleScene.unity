@@ -812,6 +812,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Pantheon.Unity::Pantheon.Unity.CombatHudView
   Runner: {fileID: 733687538}
   StatusText: {fileID: 2066372962}
+  PlayQuickShotButton: {fileID: 1965894977}
+  EndTurnButton: {fileID: 895620581}
 --- !u!4 &1486513889
 Transform:
   m_ObjectHideFlags: 0

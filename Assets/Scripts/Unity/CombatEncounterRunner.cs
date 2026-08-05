@@ -1,3 +1,4 @@
+using System.Linq;
 using UnityEngine;
 using Pantheon.Core;
 using Pantheon.Core.Combat;
@@ -24,12 +25,22 @@ namespace Pantheon.Unity
 
         public void PlayQuickShot()
         {
+            if (!Encounter.Player.Hand.Contains(_quickShot))
+            {
+                return;
+            }
+
             CombatResolver.PlayCard(Encounter.Player, _quickShot, Encounter.Enemy);
         }
 
         public void EndTurn()
         {
             Encounter.EndPlayerTurn();
+
+            if (Encounter.Outcome == CombatOutcome.InProgress)
+            {
+                Encounter.Player.StartTurn(cardsToDraw: 1);
+            }
         }
     }
 }
