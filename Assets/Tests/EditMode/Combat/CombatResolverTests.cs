@@ -339,5 +339,72 @@ namespace Pantheon.Core.Tests.Combat
 
             Assert.That(player.CurrentEnergy, Is.EqualTo(3));
         }
+
+        [Test]
+        public void ExecuteEnemyIntent_AttackIntent_DealsDamageToPlayer()
+        {
+            var player = new Player(startingEnergy: 3, startingHP: 70, new SystemRandom());
+            var moves = new[] { new EnemyMove("Bite", IntentType.Attack, value: 4) };
+            var enemy = new Enemy(maxHP: 12, moves, new FakeRandom());
+
+            CombatResolver.ExecuteEnemyIntent(enemy, player);
+
+            Assert.That(player.CurrentHP, Is.EqualTo(66));
+        }
+
+        [Test]
+        public void ExecuteEnemyIntent_BlockIntent_EnemyGainsBlock()
+        {
+            var player = new Player(startingEnergy: 3, startingHP: 70, new SystemRandom());
+            var moves = new[] { new EnemyMove("Guard", IntentType.Block, value: 8) };
+            var enemy = new Enemy(maxHP: 42, moves, new FakeRandom());
+
+            CombatResolver.ExecuteEnemyIntent(enemy, player);
+
+            Assert.That(enemy.CurrentBlock, Is.EqualTo(8));
+            Assert.That(player.CurrentHP, Is.EqualTo(70));
+        }
+
+        [Test]
+        public void ExecuteEnemyIntent_DebuffIntent_AppliesStatusToPlayerWithoutDamage()
+        {
+            var player = new Player(startingEnergy: 3, startingHP: 70, new SystemRandom());
+            var moves = new[] { new EnemyMove("Shriek", IntentType.Debuff, value: 2, status: StatusType.Drained) };
+            var enemy = new Enemy(maxHP: 30, moves, new FakeRandom());
+
+            CombatResolver.ExecuteEnemyIntent(enemy, player);
+
+            Assert.That(player.Drained, Is.EqualTo(2));
+            Assert.That(player.CurrentHP, Is.EqualTo(70));
+        }
+
+        [Test]
+        public void ExecuteEnemyIntent_NoIntent_DoesNothing()
+        {
+            var player = new Player(startingEnergy: 3, startingHP: 70, new SystemRandom());
+            var enemy = new Enemy(maxHP: 42, attackDamage: 10);
+
+            CombatResolver.ExecuteEnemyIntent(enemy, player);
+
+            Assert.That(player.CurrentHP, Is.EqualTo(70));
+        }
+
+        [Test]
+        public void ExecuteEnemyIntent_AfterExecuting_ChoosesNewIntent()
+        {
+            var player = new Player(startingEnergy: 3, startingHP: 70, new SystemRandom());
+            var moves = new[]
+            {
+                new EnemyMove("Attack", IntentType.Attack, value: 9, weight: 3),
+                new EnemyMove("Guard", IntentType.Block, value: 8, weight: 1)
+            };
+            var enemy = new Enemy(maxHP: 42, moves, new SequenceRandom(0, 3));
+            var firstIntent = enemy.CurrentIntent;
+
+            CombatResolver.ExecuteEnemyIntent(enemy, player);
+
+            Assert.That(firstIntent, Is.EqualTo(moves[0]));
+            Assert.That(enemy.CurrentIntent, Is.EqualTo(moves[1]));
+        }
     }
 }

@@ -38,5 +38,49 @@ namespace Pantheon.Core.Combat
         {
             target.TakeDamage(CombatMath.ApplyDamageModifiers(enemy.AttackDamage, enemy.Strength, enemy.Drained, target.Exposed));
         }
+
+        public static void ExecuteEnemyIntent(Enemy enemy, Player target)
+        {
+            var move = enemy.CurrentIntent;
+
+            if (move == null)
+            {
+                return;
+            }
+
+            switch (move.Intent)
+            {
+                case IntentType.Attack:
+                    target.TakeDamage(CombatMath.ApplyDamageModifiers(move.Value, enemy.Strength, enemy.Drained, target.Exposed));
+                    break;
+                case IntentType.Block:
+                    enemy.GainBlock(move.Value);
+                    break;
+                case IntentType.Debuff:
+                    ApplyStatus(target, move.Status, move.Value);
+                    break;
+                case IntentType.Buff:
+                    ApplyStatus(enemy, move.Status, move.Value);
+                    break;
+            }
+
+            enemy.ChooseNextIntent();
+        }
+
+        private static void ApplyStatus(ICombatant combatant, StatusType status, int amount)
+        {
+            switch (status)
+            {
+                case StatusType.Strength:
+                    combatant.GainStrength(amount);
+                    break;
+                case StatusType.Exposed:
+                    combatant.ApplyExposed(amount);
+                    break;
+                case StatusType.Drained:
+                    combatant.ApplyDrained(amount);
+                    break;
+            }
+        }
     }
 }

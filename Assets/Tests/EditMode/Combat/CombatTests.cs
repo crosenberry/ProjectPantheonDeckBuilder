@@ -150,5 +150,37 @@ namespace Pantheon.Core.Tests.Combat
             Assert.That(combat.Enemy, Is.EqualTo(enemy));
             Assert.That(combat.Enemies.Count, Is.EqualTo(1));
         }
+
+        [Test]
+        public void EndPlayerTurn_MoveBasedEnemy_ExecutesCurrentIntentInsteadOfLegacyAttack()
+        {
+            var player = new Player(startingEnergy: 3, startingHP: 70, new SystemRandom());
+            var moves = new[] { new EnemyMove("Bite", IntentType.Attack, value: 9) };
+            var enemy = new Enemy(maxHP: 12, moves, new FakeRandom());
+            var combat = new CombatEncounter(player, enemy);
+
+            combat.EndPlayerTurn();
+
+            Assert.That(player.CurrentHP, Is.EqualTo(61));
+        }
+
+        [Test]
+        public void EndPlayerTurn_MoveBasedEnemy_ChoosesNewIntentAfterActing()
+        {
+            var player = new Player(startingEnergy: 3, startingHP: 70, new SystemRandom());
+            var moves = new[]
+            {
+                new EnemyMove("Attack", IntentType.Attack, value: 9, weight: 3),
+                new EnemyMove("Guard", IntentType.Block, value: 8, weight: 1)
+            };
+            var enemy = new Enemy(maxHP: 42, moves, new SequenceRandom(0, 3));
+            var combat = new CombatEncounter(player, enemy);
+            var firstIntent = enemy.CurrentIntent;
+
+            combat.EndPlayerTurn();
+
+            Assert.That(firstIntent, Is.EqualTo(moves[0]));
+            Assert.That(enemy.CurrentIntent, Is.EqualTo(moves[1]));
+        }
     }
 }
