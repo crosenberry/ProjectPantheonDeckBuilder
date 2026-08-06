@@ -211,6 +211,120 @@ namespace Pantheon.Core.Tests.Blessings.Artemis
         }
 
         [Test]
+        public void LooseArrow_IsAttackTaggedShot()
+        {
+            var card = Core.Blessings.Artemis.ArtemisCards.LooseArrow();
+
+            Assert.That(card.Type, Is.EqualTo(CardType.Attack));
+            Assert.That(card.Tags.Contains(CardTag.Shot), Is.True);
+        }
+
+        [Test]
+        public void LooseArrow_DealsThreeDamage()
+        {
+            var player = new Player(startingEnergy: 3);
+            var enemy = new Enemy(maxHP: 42);
+            var card = Core.Blessings.Artemis.ArtemisCards.LooseArrow();
+            player.AddToDrawPile(new[] { card });
+            player.StartTurn(cardsToDraw: 1);
+
+            CombatResolver.PlayCard(player, card, enemy);
+
+            Assert.That(enemy.CurrentHP, Is.EqualTo(39));
+        }
+
+        [Test]
+        public void PreciseShot_IsAttackTaggedShot()
+        {
+            var card = Core.Blessings.Artemis.ArtemisCards.PreciseShot();
+
+            Assert.That(card.Type, Is.EqualTo(CardType.Attack));
+            Assert.That(card.Tags.Contains(CardTag.Shot), Is.True);
+        }
+
+        [Test]
+        public void PreciseShot_DealsNineDamage()
+        {
+            var player = new Player(startingEnergy: 3);
+            var enemy = new Enemy(maxHP: 42);
+            var card = Core.Blessings.Artemis.ArtemisCards.PreciseShot();
+            player.AddToDrawPile(new[] { card });
+            player.StartTurn(cardsToDraw: 1);
+
+            CombatResolver.PlayCard(player, card, enemy);
+
+            Assert.That(enemy.CurrentHP, Is.EqualTo(33));
+        }
+
+        [Test]
+        public void Pathfinder_IsSkillWithNoTags()
+        {
+            var card = Core.Blessings.Artemis.ArtemisCards.Pathfinder();
+
+            Assert.That(card.Type, Is.EqualTo(CardType.Skill));
+            Assert.That(card.Tags.Count, Is.EqualTo(0));
+        }
+
+        [Test]
+        public void Pathfinder_DrawsTwoAndDiscardsOneNonShotCard()
+        {
+            var player = new Player(startingEnergy: 3);
+            var pathfinder = Core.Blessings.Artemis.ArtemisCards.Pathfinder();
+            var quickShot = Core.Blessings.Artemis.ArtemisCards.QuickShot();
+            var sideStep = Core.Blessings.Artemis.ArtemisCards.SideStep();
+            player.AddToDrawPile(new[] { pathfinder });
+            player.StartTurn(cardsToDraw: 1);
+            player.AddToDrawPile(new[] { quickShot, sideStep });
+            var enemy = new Enemy(maxHP: 42);
+
+            CombatResolver.PlayCard(player, pathfinder, enemy);
+
+            Assert.That(player.Hand.Contains(quickShot), Is.True);
+            Assert.That(player.Hand.Contains(sideStep), Is.False);
+            Assert.That(player.DiscardPile.Contains(sideStep), Is.True);
+        }
+
+        [Test]
+        public void PointBlank_IsAttackTaggedShot()
+        {
+            var card = Core.Blessings.Artemis.ArtemisCards.PointBlank();
+
+            Assert.That(card.Type, Is.EqualTo(CardType.Attack));
+            Assert.That(card.Tags.Contains(CardTag.Shot), Is.True);
+        }
+
+        [Test]
+        public void PointBlank_EnemyNotExposed_DealsDamageOnly()
+        {
+            var player = new Player(startingEnergy: 3);
+            var enemy = new Enemy(maxHP: 42);
+            var card = Core.Blessings.Artemis.ArtemisCards.PointBlank();
+            player.AddToDrawPile(new[] { card });
+            player.StartTurn(cardsToDraw: 1);
+
+            CombatResolver.PlayCard(player, card, enemy);
+
+            Assert.That(enemy.CurrentHP, Is.EqualTo(35));
+            Assert.That(enemy.Drained, Is.EqualTo(0));
+        }
+
+        [Test]
+        public void PointBlank_EnemyExposed_DealsDamageAndAppliesDrained()
+        {
+            var player = new Player(startingEnergy: 3);
+            var enemy = new Enemy(maxHP: 42);
+            enemy.ApplyExposed(1);
+            var card = Core.Blessings.Artemis.ArtemisCards.PointBlank();
+            player.AddToDrawPile(new[] { card });
+            player.StartTurn(cardsToDraw: 1);
+
+            CombatResolver.PlayCard(player, card, enemy);
+
+            Assert.That(enemy.CurrentHP, Is.EqualTo(32));
+            Assert.That(enemy.Drained, Is.EqualTo(1));
+        }
+
+        [Test]
         public void StarterDeck_ReturnsTenCards()
         {
             var deck = Core.Blessings.Artemis.ArtemisCards.StarterDeck().ToList();

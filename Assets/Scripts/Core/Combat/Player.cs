@@ -65,7 +65,12 @@ namespace Pantheon.Core.Combat
             Drained = System.Math.Max(0, Drained - 1);
             Sundered = System.Math.Max(0, Sundered - 1);
 
-            for (var i = 0; i < cardsToDraw; i++)
+            DrawCards(cardsToDraw);
+        }
+
+        public void DrawCards(int count)
+        {
+            for (var i = 0; i < count; i++)
             {
                 if (_drawPile.Count == 0)
                 {

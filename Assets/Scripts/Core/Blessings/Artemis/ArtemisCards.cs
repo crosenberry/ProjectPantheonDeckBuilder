@@ -66,6 +66,34 @@ namespace Pantheon.Core.Blessings.Artemis
             });
         }
 
+        public static Card LooseArrow()
+        {
+            return Card.Attack("Loose Arrow", energyCost: 0, damage: 3, tags: new[] { CardTag.Shot });
+        }
+
+        public static Card PreciseShot()
+        {
+            return Card.Attack("Precise Shot", energyCost: 1, damage: 9, tags: new[] { CardTag.Shot });
+        }
+
+        public static Card Pathfinder()
+        {
+            return new Card("Pathfinder", energyCost: 1, CardType.Skill, new CardEffect[]
+            {
+                new DrawCardEffect(2),
+                new DiscardCardWithoutTagEffect(CardTag.Shot)
+            });
+        }
+
+        public static Card PointBlank()
+        {
+            return new Card("Point-Blank", energyCost: 1, CardType.Attack, new CardEffect[]
+            {
+                new DealDamageEffect(7),
+                new ConditionalApplyStatusEffect(StatusType.Exposed, StatusType.Drained, 1, EffectTarget.Enemy)
+            }, tags: new[] { CardTag.Shot });
+        }
+
         public static IEnumerable<Card> StarterDeck()
         {
             for (var i = 0; i < 5; i++)

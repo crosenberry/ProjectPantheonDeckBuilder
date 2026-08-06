@@ -191,6 +191,19 @@ namespace Pantheon.Core.Tests.Combat
         }
 
         [Test]
+        public void DrawCards_AddsRequestedCardsToHandFromDrawPile()
+        {
+            var player = new Player(startingEnergy: 3);
+            var deck = Enumerable.Range(1, 3).Select(i => Card.Attack($"Card {i}", energyCost: 1, damage: 1));
+            player.AddToDrawPile(deck);
+
+            player.DrawCards(2);
+
+            Assert.That(player.Hand.Count, Is.EqualTo(2));
+            Assert.That(player.DrawPile.Count, Is.EqualTo(1));
+        }
+
+        [Test]
         public void GainStrength_IncreasesStrength()
         {
             var player = new Player(startingEnergy: 3);
