@@ -32,7 +32,7 @@ namespace Pantheon.Unity
                 return;
             }
 
-            CombatResolver.PlayCard(Encounter.Player, card, Encounter.Enemy);
+            Encounter.PlayCard(card, Encounter.Enemy);
         }
 
         public void EndTurn()
