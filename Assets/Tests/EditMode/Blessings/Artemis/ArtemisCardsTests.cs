@@ -325,6 +325,45 @@ namespace Pantheon.Core.Tests.Blessings.Artemis
         }
 
         [Test]
+        public void Flurry_IsAttackTaggedShot()
+        {
+            var card = Core.Blessings.Artemis.ArtemisCards.Flurry();
+
+            Assert.That(card.Type, Is.EqualTo(CardType.Attack));
+            Assert.That(card.Tags.Contains(CardTag.Shot), Is.True);
+        }
+
+        [Test]
+        public void Flurry_NoShotsPlayedYet_DealsBaseDamage()
+        {
+            var player = new Player(startingEnergy: 1);
+            var enemy = new Enemy(maxHP: 42);
+            var card = Core.Blessings.Artemis.ArtemisCards.Flurry();
+            player.AddToDrawPile(new[] { card });
+            player.StartTurn(cardsToDraw: 1);
+
+            CombatResolver.PlayCard(player, card, enemy);
+
+            Assert.That(enemy.CurrentHP, Is.EqualTo(38));
+        }
+
+        [Test]
+        public void Flurry_AfterEarlierShotPlayedThisTurn_DealsBonusDamage()
+        {
+            var player = new Player(startingEnergy: 2);
+            var enemy = new Enemy(maxHP: 42);
+            var quickShot = Core.Blessings.Artemis.ArtemisCards.QuickShot();
+            var flurry = Core.Blessings.Artemis.ArtemisCards.Flurry();
+            player.AddToDrawPile(new[] { quickShot, flurry });
+            player.StartTurn(cardsToDraw: 2);
+            CombatResolver.PlayCard(player, quickShot, enemy);
+
+            CombatResolver.PlayCard(player, flurry, enemy);
+
+            Assert.That(enemy.CurrentHP, Is.EqualTo(30));
+        }
+
+        [Test]
         public void StarterDeck_ReturnsTenCards()
         {
             var deck = Core.Blessings.Artemis.ArtemisCards.StarterDeck().ToList();

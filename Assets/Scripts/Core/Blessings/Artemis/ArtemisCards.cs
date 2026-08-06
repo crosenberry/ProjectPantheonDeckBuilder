@@ -94,6 +94,14 @@ namespace Pantheon.Core.Blessings.Artemis
             }, tags: new[] { CardTag.Shot });
         }
 
+        public static Card Flurry()
+        {
+            return new Card("Flurry", energyCost: 1, CardType.Attack, new CardEffect[]
+            {
+                new ShotCountScaledDamageEffect(baseAmount: 4, bonusPerShot: 2)
+            }, tags: new[] { CardTag.Shot });
+        }
+
         public static IEnumerable<Card> StarterDeck()
         {
             for (var i = 0; i < 5; i++)

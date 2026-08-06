@@ -204,6 +204,27 @@ namespace Pantheon.Core.Tests.Combat
         }
 
         [Test]
+        public void RecordShotPlayed_IncreasesShotsPlayedThisTurn()
+        {
+            var player = new Player(startingEnergy: 3);
+
+            player.RecordShotPlayed();
+
+            Assert.That(player.ShotsPlayedThisTurn, Is.EqualTo(1));
+        }
+
+        [Test]
+        public void StartTurn_ResetsShotsPlayedThisTurnToZero()
+        {
+            var player = new Player(startingEnergy: 3);
+            player.RecordShotPlayed();
+
+            player.StartTurn(cardsToDraw: 0);
+
+            Assert.That(player.ShotsPlayedThisTurn, Is.EqualTo(0));
+        }
+
+        [Test]
         public void GainStrength_IncreasesStrength()
         {
             var player = new Player(startingEnergy: 3);

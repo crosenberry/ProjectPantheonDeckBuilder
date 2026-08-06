@@ -19,6 +19,7 @@ namespace Pantheon.Core.Combat
         public int Drained { get; private set; }
         public int Sundered { get; private set; }
         public int Volley { get; private set; }
+        public int ShotsPlayedThisTurn { get; private set; }
         public IReadOnlyList<Card> DrawPile => _drawPile;
         public IReadOnlyList<Card> DiscardPile => _discardPile;
         public IReadOnlyList<Card> Hand => _hand;
@@ -61,6 +62,7 @@ namespace Pantheon.Core.Combat
             CurrentEnergy = MaxEnergy;
             CurrentBlock = 0;
             Volley = 0;
+            ShotsPlayedThisTurn = 0;
             Exposed = System.Math.Max(0, Exposed - 1);
             Drained = System.Math.Max(0, Drained - 1);
             Sundered = System.Math.Max(0, Sundered - 1);
@@ -146,6 +148,11 @@ namespace Pantheon.Core.Combat
             var consumed = Volley;
             Volley = 0;
             return consumed;
+        }
+
+        public void RecordShotPlayed()
+        {
+            ShotsPlayedThisTurn += 1;
         }
 
         public void TakeDamage(int amount)

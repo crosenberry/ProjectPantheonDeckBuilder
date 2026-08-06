@@ -19,6 +19,11 @@ namespace Pantheon.Core.Combat
             {
                 effect.Apply(context);
             }
+
+            if (card.Tags.Contains(CardTag.Shot))
+            {
+                player.RecordShotPlayed();
+            }
         }
 
         public static void EnemyAttack(Enemy enemy, Player target)

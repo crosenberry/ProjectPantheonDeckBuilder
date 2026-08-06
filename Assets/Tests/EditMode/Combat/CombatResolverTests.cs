@@ -265,5 +265,33 @@ namespace Pantheon.Core.Tests.Combat
 
             Assert.That(player.CurrentHP, Is.EqualTo(58));
         }
+
+        [Test]
+        public void PlayCard_ShotTaggedCard_IncrementsShotsPlayedThisTurn()
+        {
+            var player = new Player(startingEnergy: 1);
+            var enemy = new Enemy(maxHP: 42);
+            var quickShot = Card.Attack("Quick Shot", energyCost: 1, damage: 6, tags: new[] { CardTag.Shot });
+            player.AddToDrawPile(new[] { quickShot });
+            player.StartTurn(cardsToDraw: 1);
+
+            CombatResolver.PlayCard(player, quickShot, enemy);
+
+            Assert.That(player.ShotsPlayedThisTurn, Is.EqualTo(1));
+        }
+
+        [Test]
+        public void PlayCard_NonShotCard_DoesNotIncrementShotsPlayedThisTurn()
+        {
+            var player = new Player(startingEnergy: 1);
+            var enemy = new Enemy(maxHP: 42);
+            var sideStep = Card.Skill("Side Step", energyCost: 1, block: 5);
+            player.AddToDrawPile(new[] { sideStep });
+            player.StartTurn(cardsToDraw: 1);
+
+            CombatResolver.PlayCard(player, sideStep, enemy);
+
+            Assert.That(player.ShotsPlayedThisTurn, Is.EqualTo(0));
+        }
     }
 }
