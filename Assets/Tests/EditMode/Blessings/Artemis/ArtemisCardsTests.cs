@@ -406,6 +406,48 @@ namespace Pantheon.Core.Tests.Blessings.Artemis
         }
 
         [Test]
+        public void RainOfArrows_IsAttackTaggedShot()
+        {
+            var card = Core.Blessings.Artemis.ArtemisCards.RainOfArrows();
+
+            Assert.That(card.Type, Is.EqualTo(CardType.Attack));
+            Assert.That(card.Tags.Contains(CardTag.Shot), Is.True);
+        }
+
+        [Test]
+        public void RainOfArrows_DealsDamageToAllEnemies()
+        {
+            var player = new Player(startingEnergy: 2);
+            var enemyA = new Enemy(maxHP: 42);
+            var enemyB = new Enemy(maxHP: 30);
+            var card = Core.Blessings.Artemis.ArtemisCards.RainOfArrows();
+            player.AddToDrawPile(new[] { card });
+            player.StartTurn(cardsToDraw: 1);
+
+            CombatResolver.PlayCard(player, card, enemyA, new[] { enemyA, enemyB });
+
+            Assert.That(enemyA.CurrentHP, Is.EqualTo(39));
+            Assert.That(enemyB.CurrentHP, Is.EqualTo(27));
+        }
+
+        [Test]
+        public void RainOfArrows_ScalesWithVolley()
+        {
+            var player = new Player(startingEnergy: 2);
+            var enemyA = new Enemy(maxHP: 42);
+            var enemyB = new Enemy(maxHP: 30);
+            var card = Core.Blessings.Artemis.ArtemisCards.RainOfArrows();
+            player.AddToDrawPile(new[] { card });
+            player.StartTurn(cardsToDraw: 1);
+            player.GainVolley(2);
+
+            CombatResolver.PlayCard(player, card, enemyA, new[] { enemyA, enemyB });
+
+            Assert.That(enemyA.CurrentHP, Is.EqualTo(33));
+            Assert.That(enemyB.CurrentHP, Is.EqualTo(21));
+        }
+
+        [Test]
         public void StarterDeck_ReturnsTenCards()
         {
             var deck = Core.Blessings.Artemis.ArtemisCards.StarterDeck().ToList();

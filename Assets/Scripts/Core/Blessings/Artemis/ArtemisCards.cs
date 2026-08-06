@@ -111,6 +111,14 @@ namespace Pantheon.Core.Blessings.Artemis
             });
         }
 
+        public static Card RainOfArrows()
+        {
+            return new Card("Rain of Arrows", energyCost: 2, CardType.Attack, new CardEffect[]
+            {
+                new VolleyScaledDamageToAllEnemiesEffect(baseAmount: 3, bonusPerVolley: 3)
+            }, tags: new[] { CardTag.Shot });
+        }
+
         public static IEnumerable<Card> StarterDeck()
         {
             for (var i = 0; i < 5; i++)

@@ -1,15 +1,23 @@
+using System.Collections.Generic;
+using System.Linq;
+
 namespace Pantheon.Core.Combat
 {
     public class CombatEncounter
     {
         public Player Player { get; }
-        public Enemy Enemy { get; }
+        public IReadOnlyList<Enemy> Enemies { get; }
+        public Enemy Enemy => Enemies[0];
         public CombatOutcome Outcome { get; private set; }
 
-        public CombatEncounter(Player player, Enemy enemy)
+        public CombatEncounter(Player player, Enemy enemy) : this(player, new[] { enemy })
+        {
+        }
+
+        public CombatEncounter(Player player, IReadOnlyList<Enemy> enemies)
         {
             Player = player;
-            Enemy = enemy;
+            Enemies = enemies;
             Outcome = CombatOutcome.InProgress;
         }
 
@@ -17,14 +25,17 @@ namespace Pantheon.Core.Combat
         {
             Player.EndTurn();
 
-            if (Enemy.CurrentHP <= 0)
+            if (Enemies.All(enemy => enemy.CurrentHP <= 0))
             {
                 Outcome = CombatOutcome.PlayerWon;
                 return;
             }
 
-            Enemy.StartTurn();
-            CombatResolver.EnemyAttack(Enemy, Player);
+            foreach (var enemy in Enemies.Where(enemy => enemy.CurrentHP > 0))
+            {
+                enemy.StartTurn();
+                CombatResolver.EnemyAttack(enemy, Player);
+            }
 
             if (Player.CurrentHP <= 0)
             {
