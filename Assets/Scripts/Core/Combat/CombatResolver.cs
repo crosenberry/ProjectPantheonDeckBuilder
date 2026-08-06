@@ -6,18 +6,31 @@ namespace Pantheon.Core.Combat
     {
         public static void PlayCard(Player player, Card card, Enemy target)
         {
+            PlayCard(player, card, target, new[] { target });
+        }
+
+        public static void PlayCard(Player player, Card card, Enemy target, System.Collections.Generic.IReadOnlyList<Enemy> allEnemies)
+        {
             if (!player.Hand.Contains(card))
             {
                 throw new System.InvalidOperationException($"Card '{card.Name}' is not in hand.");
             }
 
-            player.SpendEnergy(card.EnergyCost);
+            var isShot = card.Tags.Contains(CardTag.Shot);
+            var effectiveCost = isShot ? System.Math.Max(0, card.EnergyCost - player.ShotCostReductionThisTurn) : card.EnergyCost;
+
+            player.SpendEnergy(effectiveCost);
             player.DiscardFromHand(card);
 
-            var context = new CardEffectContext(player, target);
+            var context = new CardEffectContext(player, target, allEnemies);
             foreach (var effect in card.Effects)
             {
                 effect.Apply(context);
+            }
+
+            if (isShot)
+            {
+                player.RecordShotPlayed();
             }
         }
 

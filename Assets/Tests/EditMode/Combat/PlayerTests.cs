@@ -191,6 +191,61 @@ namespace Pantheon.Core.Tests.Combat
         }
 
         [Test]
+        public void DrawCards_AddsRequestedCardsToHandFromDrawPile()
+        {
+            var player = new Player(startingEnergy: 3);
+            var deck = Enumerable.Range(1, 3).Select(i => Card.Attack($"Card {i}", energyCost: 1, damage: 1));
+            player.AddToDrawPile(deck);
+
+            player.DrawCards(2);
+
+            Assert.That(player.Hand.Count, Is.EqualTo(2));
+            Assert.That(player.DrawPile.Count, Is.EqualTo(1));
+        }
+
+        [Test]
+        public void RecordShotPlayed_IncreasesShotsPlayedThisTurn()
+        {
+            var player = new Player(startingEnergy: 3);
+
+            player.RecordShotPlayed();
+
+            Assert.That(player.ShotsPlayedThisTurn, Is.EqualTo(1));
+        }
+
+        [Test]
+        public void StartTurn_ResetsShotsPlayedThisTurnToZero()
+        {
+            var player = new Player(startingEnergy: 3);
+            player.RecordShotPlayed();
+
+            player.StartTurn(cardsToDraw: 0);
+
+            Assert.That(player.ShotsPlayedThisTurn, Is.EqualTo(0));
+        }
+
+        [Test]
+        public void ReduceShotCostThisTurn_IncreasesShotCostReductionThisTurn()
+        {
+            var player = new Player(startingEnergy: 3);
+
+            player.ReduceShotCostThisTurn(1);
+
+            Assert.That(player.ShotCostReductionThisTurn, Is.EqualTo(1));
+        }
+
+        [Test]
+        public void StartTurn_ResetsShotCostReductionThisTurnToZero()
+        {
+            var player = new Player(startingEnergy: 3);
+            player.ReduceShotCostThisTurn(1);
+
+            player.StartTurn(cardsToDraw: 0);
+
+            Assert.That(player.ShotCostReductionThisTurn, Is.EqualTo(0));
+        }
+
+        [Test]
         public void GainStrength_IncreasesStrength()
         {
             var player = new Player(startingEnergy: 3);
@@ -292,6 +347,28 @@ namespace Pantheon.Core.Tests.Combat
             player.StartTurn(cardsToDraw: 0);
 
             Assert.That(player.Volley, Is.EqualTo(0));
+        }
+
+        [Test]
+        public void ConsumeVolley_ResetsVolleyToZero()
+        {
+            var player = new Player(startingEnergy: 3);
+            player.GainVolley(3);
+
+            player.ConsumeVolley();
+
+            Assert.That(player.Volley, Is.EqualTo(0));
+        }
+
+        [Test]
+        public void ConsumeVolley_ReturnsAmountConsumed()
+        {
+            var player = new Player(startingEnergy: 3);
+            player.GainVolley(3);
+
+            var consumed = player.ConsumeVolley();
+
+            Assert.That(consumed, Is.EqualTo(3));
         }
 
         [Test]
