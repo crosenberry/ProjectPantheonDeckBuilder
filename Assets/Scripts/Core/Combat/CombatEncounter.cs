@@ -34,7 +34,15 @@ namespace Pantheon.Core.Combat
             foreach (var enemy in Enemies.Where(enemy => enemy.CurrentHP > 0))
             {
                 enemy.StartTurn();
-                CombatResolver.EnemyAttack(enemy, Player);
+
+                if (enemy.Moves.Count > 0)
+                {
+                    CombatResolver.ExecuteEnemyIntent(enemy, Player);
+                }
+                else
+                {
+                    CombatResolver.EnemyAttack(enemy, Player);
+                }
             }
 
             if (Player.CurrentHP <= 0)
