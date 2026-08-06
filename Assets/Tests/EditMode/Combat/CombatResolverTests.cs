@@ -293,5 +293,51 @@ namespace Pantheon.Core.Tests.Combat
 
             Assert.That(player.ShotsPlayedThisTurn, Is.EqualTo(0));
         }
+
+        [Test]
+        public void PlayCard_ShotTaggedCardWithCostReduction_SpendsReducedEnergy()
+        {
+            var player = new Player(startingEnergy: 3);
+            player.ReduceShotCostThisTurn(1);
+            var enemy = new Enemy(maxHP: 42);
+            var quickShot = Card.Attack("Quick Shot", energyCost: 1, damage: 6, tags: new[] { CardTag.Shot });
+            player.AddToDrawPile(new[] { quickShot });
+            player.StartTurn(cardsToDraw: 1);
+            player.ReduceShotCostThisTurn(1);
+
+            CombatResolver.PlayCard(player, quickShot, enemy);
+
+            Assert.That(player.CurrentEnergy, Is.EqualTo(3));
+        }
+
+        [Test]
+        public void PlayCard_NonShotCardWithCostReduction_SpendsFullEnergy()
+        {
+            var player = new Player(startingEnergy: 3);
+            var enemy = new Enemy(maxHP: 42);
+            var sideStep = Card.Skill("Side Step", energyCost: 1, block: 5);
+            player.AddToDrawPile(new[] { sideStep });
+            player.StartTurn(cardsToDraw: 1);
+            player.ReduceShotCostThisTurn(1);
+
+            CombatResolver.PlayCard(player, sideStep, enemy);
+
+            Assert.That(player.CurrentEnergy, Is.EqualTo(2));
+        }
+
+        [Test]
+        public void PlayCard_ShotCostReductionExceedsCost_FlooredAtZero()
+        {
+            var player = new Player(startingEnergy: 3);
+            var enemy = new Enemy(maxHP: 42);
+            var quickShot = Card.Attack("Quick Shot", energyCost: 1, damage: 6, tags: new[] { CardTag.Shot });
+            player.AddToDrawPile(new[] { quickShot });
+            player.StartTurn(cardsToDraw: 1);
+            player.ReduceShotCostThisTurn(5);
+
+            CombatResolver.PlayCard(player, quickShot, enemy);
+
+            Assert.That(player.CurrentEnergy, Is.EqualTo(3));
+        }
     }
 }

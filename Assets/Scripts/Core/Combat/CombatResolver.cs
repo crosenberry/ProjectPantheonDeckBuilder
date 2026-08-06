@@ -11,7 +11,10 @@ namespace Pantheon.Core.Combat
                 throw new System.InvalidOperationException($"Card '{card.Name}' is not in hand.");
             }
 
-            player.SpendEnergy(card.EnergyCost);
+            var isShot = card.Tags.Contains(CardTag.Shot);
+            var effectiveCost = isShot ? System.Math.Max(0, card.EnergyCost - player.ShotCostReductionThisTurn) : card.EnergyCost;
+
+            player.SpendEnergy(effectiveCost);
             player.DiscardFromHand(card);
 
             var context = new CardEffectContext(player, target);
@@ -20,7 +23,7 @@ namespace Pantheon.Core.Combat
                 effect.Apply(context);
             }
 
-            if (card.Tags.Contains(CardTag.Shot))
+            if (isShot)
             {
                 player.RecordShotPlayed();
             }

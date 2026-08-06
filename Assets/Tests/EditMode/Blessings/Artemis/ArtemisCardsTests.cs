@@ -364,6 +364,48 @@ namespace Pantheon.Core.Tests.Blessings.Artemis
         }
 
         [Test]
+        public void Quickdraw_IsSkillWithNoTags()
+        {
+            var card = Core.Blessings.Artemis.ArtemisCards.Quickdraw();
+
+            Assert.That(card.Type, Is.EqualTo(CardType.Skill));
+            Assert.That(card.Tags.Count, Is.EqualTo(0));
+        }
+
+        [Test]
+        public void Quickdraw_DrawsOneCardAndReducesShotCostThisTurn()
+        {
+            var player = new Player(startingEnergy: 3);
+            var enemy = new Enemy(maxHP: 42);
+            var quickdraw = Core.Blessings.Artemis.ArtemisCards.Quickdraw();
+            var filler = Core.Blessings.Artemis.ArtemisCards.SideStep();
+            player.AddToDrawPile(new[] { quickdraw });
+            player.StartTurn(cardsToDraw: 1);
+            player.AddToDrawPile(new[] { filler });
+
+            CombatResolver.PlayCard(player, quickdraw, enemy);
+
+            Assert.That(player.Hand.Contains(filler), Is.True);
+            Assert.That(player.ShotCostReductionThisTurn, Is.EqualTo(1));
+        }
+
+        [Test]
+        public void Quickdraw_ThenShotCard_ReducesThatCardsCost()
+        {
+            var player = new Player(startingEnergy: 2);
+            var enemy = new Enemy(maxHP: 42);
+            var quickdraw = Core.Blessings.Artemis.ArtemisCards.Quickdraw();
+            var quickShot = Core.Blessings.Artemis.ArtemisCards.QuickShot();
+            player.AddToDrawPile(new[] { quickdraw, quickShot });
+            player.StartTurn(cardsToDraw: 2);
+            CombatResolver.PlayCard(player, quickdraw, enemy);
+
+            CombatResolver.PlayCard(player, quickShot, enemy);
+
+            Assert.That(player.CurrentEnergy, Is.EqualTo(1));
+        }
+
+        [Test]
         public void StarterDeck_ReturnsTenCards()
         {
             var deck = Core.Blessings.Artemis.ArtemisCards.StarterDeck().ToList();

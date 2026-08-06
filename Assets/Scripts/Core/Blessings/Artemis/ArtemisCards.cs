@@ -102,6 +102,15 @@ namespace Pantheon.Core.Blessings.Artemis
             }, tags: new[] { CardTag.Shot });
         }
 
+        public static Card Quickdraw()
+        {
+            return new Card("Quickdraw", energyCost: 1, CardType.Skill, new CardEffect[]
+            {
+                new DrawCardEffect(1),
+                new ReduceShotCostEffect(1)
+            });
+        }
+
         public static IEnumerable<Card> StarterDeck()
         {
             for (var i = 0; i < 5; i++)
