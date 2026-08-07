@@ -20,19 +20,20 @@ namespace Pantheon.PlayTests
             Assert.That(runner.Encounter, Is.Not.Null);
             Assert.That(runner.Encounter.Enemy.CurrentHP, Is.EqualTo(42));
             Assert.That(runner.Encounter.Player.CurrentHP, Is.EqualTo(70));
-            Assert.That(runner.Encounter.Player.Hand.Count, Is.EqualTo(1));
+            Assert.That(runner.Encounter.Player.Hand.Count, Is.EqualTo(5));
 
             Object.Destroy(go);
         }
 
         [UnityTest]
-        public IEnumerator PlayQuickShot_DealsDamageToEnemy()
+        public IEnumerator PlayCard_ValidCardInHand_AppliesItsEffect()
         {
             var go = new GameObject();
             var runner = go.AddComponent<CombatEncounterRunner>();
             yield return null;
+            var card = runner.Encounter.Player.Hand[0];
 
-            runner.PlayQuickShot();
+            runner.PlayCard(card);
 
             Assert.That(runner.Encounter.Enemy.CurrentHP, Is.EqualTo(36));
 
@@ -40,7 +41,22 @@ namespace Pantheon.PlayTests
         }
 
         [UnityTest]
-        public IEnumerator EndTurn_TriggersEnemyAttackOnPlayer()
+        public IEnumerator PlayCard_CardAlreadyPlayed_DoesNotThrowOrDoubleApply()
+        {
+            var go = new GameObject();
+            var runner = go.AddComponent<CombatEncounterRunner>();
+            yield return null;
+            var card = runner.Encounter.Player.Hand[0];
+            runner.PlayCard(card);
+
+            Assert.DoesNotThrow(() => runner.PlayCard(card));
+            Assert.That(runner.Encounter.Enemy.CurrentHP, Is.EqualTo(36));
+
+            Object.Destroy(go);
+        }
+
+        [UnityTest]
+        public IEnumerator EndTurn_TriggersEnemyIntentOnPlayer()
         {
             var go = new GameObject();
             var runner = go.AddComponent<CombatEncounterRunner>();
@@ -48,7 +64,8 @@ namespace Pantheon.PlayTests
 
             runner.EndTurn();
 
-            Assert.That(runner.Encounter.Player.CurrentHP, Is.EqualTo(60));
+            // Hoplite Skirmisher rolls Attack (9 dmg -> HP 61) or Guard (0 dmg -> HP 70).
+            Assert.That(runner.Encounter.Player.CurrentHP, Is.EqualTo(70).Or.EqualTo(61));
 
             Object.Destroy(go);
         }
@@ -63,7 +80,7 @@ namespace Pantheon.PlayTests
             runner.EndTurn();
 
             Assert.That(runner.Encounter.Outcome, Is.EqualTo(Pantheon.Core.Combat.CombatOutcome.InProgress));
-            Assert.That(runner.Encounter.Player.Hand.Count, Is.EqualTo(1));
+            Assert.That(runner.Encounter.Player.Hand.Count, Is.EqualTo(5));
 
             Object.Destroy(go);
         }
@@ -80,20 +97,6 @@ namespace Pantheon.PlayTests
 
             Assert.That(runner.Encounter.Outcome, Is.EqualTo(Pantheon.Core.Combat.CombatOutcome.PlayerWon));
             Assert.That(runner.Encounter.Player.Hand.Count, Is.EqualTo(0));
-
-            Object.Destroy(go);
-        }
-
-        [UnityTest]
-        public IEnumerator PlayQuickShot_CardAlreadyPlayed_DoesNotThrow()
-        {
-            var go = new GameObject();
-            var runner = go.AddComponent<CombatEncounterRunner>();
-            yield return null;
-            runner.PlayQuickShot();
-
-            Assert.DoesNotThrow(() => runner.PlayQuickShot());
-            Assert.That(runner.Encounter.Enemy.CurrentHP, Is.EqualTo(36));
 
             Object.Destroy(go);
         }

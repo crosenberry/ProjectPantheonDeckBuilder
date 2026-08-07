@@ -2,35 +2,37 @@ using System.Linq;
 using UnityEngine;
 using Pantheon.Core;
 using Pantheon.Core.Combat;
+using Pantheon.Core.Blessings.Artemis;
+using Pantheon.Core.Enemies.Greek;
 
 namespace Pantheon.Unity
 {
     public class CombatEncounterRunner : MonoBehaviour
     {
-        public CombatEncounter Encounter { get; private set; }
+        private const int CardsDrawnPerTurn = 5;
 
-        private Card _quickShot;
+        public CombatEncounter Encounter { get; private set; }
 
         private void Start()
         {
-            var player = new Player(startingEnergy: 3, startingHP: 70, new SystemRandom());
-            var enemy = new Enemy(maxHP: 42, attackDamage: 10);
-            _quickShot = Card.Attack("Quick Shot", energyCost: 1, damage: 6);
+            var random = new SystemRandom();
+            var player = new Player(startingEnergy: 3, startingHP: 70, random);
+            var enemy = GreekEnemies.HopliteSkirmisher(random);
 
-            player.AddToDrawPile(new[] { _quickShot });
-            player.StartTurn(cardsToDraw: 1);
+            player.AddToDrawPile(ArtemisCards.StarterDeck());
+            player.StartTurn(cardsToDraw: CardsDrawnPerTurn);
 
             Encounter = new CombatEncounter(player, enemy);
         }
 
-        public void PlayQuickShot()
+        public void PlayCard(Card card)
         {
-            if (!Encounter.Player.Hand.Contains(_quickShot))
+            if (!Encounter.Player.Hand.Contains(card))
             {
                 return;
             }
 
-            CombatResolver.PlayCard(Encounter.Player, _quickShot, Encounter.Enemy);
+            Encounter.PlayCard(card, Encounter.Enemy);
         }
 
         public void EndTurn()
@@ -39,7 +41,7 @@ namespace Pantheon.Unity
 
             if (Encounter.Outcome == CombatOutcome.InProgress)
             {
-                Encounter.Player.StartTurn(cardsToDraw: 1);
+                Encounter.Player.StartTurn(cardsToDraw: CardsDrawnPerTurn);
             }
         }
     }

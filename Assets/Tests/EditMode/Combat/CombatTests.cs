@@ -1,3 +1,4 @@
+using System;
 using NUnit.Framework;
 using Pantheon.Core.Combat;
 
@@ -181,6 +182,100 @@ namespace Pantheon.Core.Tests.Combat
 
             Assert.That(firstIntent, Is.EqualTo(moves[0]));
             Assert.That(enemy.CurrentIntent, Is.EqualTo(moves[1]));
+        }
+
+        [Test]
+        public void PlayCard_KillsOnlyEnemy_SetsPlayerWonImmediatelyWithoutEndingTurn()
+        {
+            var player = new Player(startingEnergy: 1);
+            var enemy = new Enemy(maxHP: 5);
+            var card = Card.Attack("Killing Blow", energyCost: 1, damage: 10);
+            player.AddToDrawPile(new[] { card });
+            player.StartTurn(cardsToDraw: 1);
+            var combat = new CombatEncounter(player, enemy);
+
+            combat.PlayCard(card, enemy);
+
+            Assert.That(combat.Outcome, Is.EqualTo(CombatOutcome.PlayerWon));
+        }
+
+        [Test]
+        public void PlayCard_EnemySurvives_OutcomeStaysInProgress()
+        {
+            var player = new Player(startingEnergy: 1);
+            var enemy = new Enemy(maxHP: 42);
+            var card = Card.Attack("Quick Shot", energyCost: 1, damage: 6);
+            player.AddToDrawPile(new[] { card });
+            player.StartTurn(cardsToDraw: 1);
+            var combat = new CombatEncounter(player, enemy);
+
+            combat.PlayCard(card, enemy);
+
+            Assert.That(combat.Outcome, Is.EqualTo(CombatOutcome.InProgress));
+        }
+
+        [Test]
+        public void PlayCard_MultipleEnemiesOneSurvives_OutcomeStaysInProgress()
+        {
+            var player = new Player(startingEnergy: 1);
+            var enemyA = new Enemy(maxHP: 5);
+            var enemyB = new Enemy(maxHP: 42);
+            var card = Card.Attack("Killing Blow", energyCost: 1, damage: 10);
+            player.AddToDrawPile(new[] { card });
+            player.StartTurn(cardsToDraw: 1);
+            var combat = new CombatEncounter(player, new[] { enemyA, enemyB });
+
+            combat.PlayCard(card, enemyA);
+
+            Assert.That(combat.Outcome, Is.EqualTo(CombatOutcome.InProgress));
+        }
+
+        [Test]
+        public void PlayCard_KillsLastRemainingEnemy_SetsPlayerWonImmediately()
+        {
+            var player = new Player(startingEnergy: 1);
+            var enemyA = new Enemy(maxHP: 5);
+            var enemyB = new Enemy(maxHP: 5);
+            enemyB.TakeDamage(999);
+            var card = Card.Attack("Killing Blow", energyCost: 1, damage: 10);
+            player.AddToDrawPile(new[] { card });
+            player.StartTurn(cardsToDraw: 1);
+            var combat = new CombatEncounter(player, new[] { enemyA, enemyB });
+
+            combat.PlayCard(card, enemyA);
+
+            Assert.That(combat.Outcome, Is.EqualTo(CombatOutcome.PlayerWon));
+        }
+
+        [Test]
+        public void PlayCard_MultiTargetEffect_HitsEveryEnemyInEncounter()
+        {
+            var player = new Player(startingEnergy: 1);
+            var enemyA = new Enemy(maxHP: 42);
+            var enemyB = new Enemy(maxHP: 30);
+            var card = new Card("Rain of Arrows", energyCost: 1, CardType.Attack, new CardEffect[]
+            {
+                new VolleyScaledDamageToAllEnemiesEffect(baseAmount: 3, bonusPerVolley: 0)
+            });
+            player.AddToDrawPile(new[] { card });
+            player.StartTurn(cardsToDraw: 1);
+            var combat = new CombatEncounter(player, new[] { enemyA, enemyB });
+
+            combat.PlayCard(card, enemyA);
+
+            Assert.That(enemyA.CurrentHP, Is.EqualTo(39));
+            Assert.That(enemyB.CurrentHP, Is.EqualTo(27));
+        }
+
+        [Test]
+        public void PlayCard_CardNotInHand_Throws()
+        {
+            var player = new Player(startingEnergy: 1);
+            var enemy = new Enemy(maxHP: 42);
+            var phantomCard = Card.Attack("Phantom", energyCost: 1, damage: 6);
+            var combat = new CombatEncounter(player, enemy);
+
+            Assert.Throws<InvalidOperationException>(() => combat.PlayCard(phantomCard, enemy));
         }
     }
 }
