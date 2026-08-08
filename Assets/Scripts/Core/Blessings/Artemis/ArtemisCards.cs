@@ -119,6 +119,13 @@ namespace Pantheon.Core.Blessings.Artemis
             }, tags: new[] { CardTag.Shot });
         }
 
+        public static Card PracticedHand()
+        {
+            return new Card("Practiced Hand", energyCost: 1, CardType.Power, new CardEffect[0],
+                tags: new[] { CardTag.Exhaust },
+                triggers: new[] { new TriggeredEffect(TriggerEvent.TurnStarted, new GainVolleyEffect(1)) });
+        }
+
         public static IEnumerable<Card> StarterDeck()
         {
             for (var i = 0; i < 5; i++)

@@ -406,5 +406,73 @@ namespace Pantheon.Core.Tests.Combat
             Assert.That(firstIntent, Is.EqualTo(moves[0]));
             Assert.That(enemy.CurrentIntent, Is.EqualTo(moves[1]));
         }
+
+        [Test]
+        public void FireTriggers_MatchingEvent_AppliesEffect()
+        {
+            var player = new Player(startingEnergy: 3);
+            player.AddTrigger(new TriggeredEffect(TriggerEvent.TurnStarted, new GainVolleyEffect(1)));
+            var enemy = new Enemy(maxHP: 42);
+
+            CombatResolver.FireTriggers(player, TriggerEvent.TurnStarted, enemy, new[] { enemy });
+
+            Assert.That(player.Volley, Is.EqualTo(1));
+        }
+
+        [Test]
+        public void FireTriggers_NonMatchingEvent_DoesNotApply()
+        {
+            var player = new Player(startingEnergy: 3);
+            player.AddTrigger(new TriggeredEffect(TriggerEvent.TurnStarted, new GainVolleyEffect(1)));
+            var enemy = new Enemy(maxHP: 42);
+
+            CombatResolver.FireTriggers(player, TriggerEvent.TurnEnded, enemy, new[] { enemy });
+
+            Assert.That(player.Volley, Is.EqualTo(0));
+        }
+
+        [Test]
+        public void FireTriggers_MultipleMatchingTriggers_AppliesAll()
+        {
+            var player = new Player(startingEnergy: 3);
+            player.AddTrigger(new TriggeredEffect(TriggerEvent.TurnStarted, new GainVolleyEffect(1)));
+            player.AddTrigger(new TriggeredEffect(TriggerEvent.TurnStarted, new GainVolleyEffect(1)));
+            var enemy = new Enemy(maxHP: 42);
+
+            CombatResolver.FireTriggers(player, TriggerEvent.TurnStarted, enemy, new[] { enemy });
+
+            Assert.That(player.Volley, Is.EqualTo(2));
+        }
+
+        [Test]
+        public void PlayCard_CardWithTriggers_RegistersThemOnPlayer()
+        {
+            var player = new Player(startingEnergy: 1);
+            var enemy = new Enemy(maxHP: 42);
+            var trigger = new TriggeredEffect(TriggerEvent.TurnStarted, new GainVolleyEffect(1));
+            var card = new Card("Practiced Hand", energyCost: 1, CardType.Power, new CardEffect[0], tags: new[] { CardTag.Exhaust }, triggers: new[] { trigger });
+            player.AddToDrawPile(new[] { card });
+            player.StartTurn(cardsToDraw: 1);
+
+            CombatResolver.PlayCard(player, card, enemy);
+
+            Assert.That(player.Triggers.Contains(trigger), Is.True);
+        }
+
+        [Test]
+        public void PlayCard_ExhaustTaggedCard_RemovesFromHandWithoutDiscarding()
+        {
+            var player = new Player(startingEnergy: 1);
+            var enemy = new Enemy(maxHP: 42);
+            var card = new Card("Practiced Hand", energyCost: 1, CardType.Power, new CardEffect[0], tags: new[] { CardTag.Exhaust });
+            player.AddToDrawPile(new[] { card });
+            player.StartTurn(cardsToDraw: 1);
+
+            CombatResolver.PlayCard(player, card, enemy);
+
+            Assert.That(player.Hand.Contains(card), Is.False);
+            Assert.That(player.DiscardPile.Contains(card), Is.False);
+            Assert.That(player.ExhaustPile.Contains(card), Is.True);
+        }
     }
 }

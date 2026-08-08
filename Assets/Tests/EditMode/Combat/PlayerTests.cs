@@ -246,6 +246,44 @@ namespace Pantheon.Core.Tests.Combat
         }
 
         [Test]
+        public void ExhaustFromHand_RemovesFromHandAddsToExhaustPile()
+        {
+            var player = new Player(startingEnergy: 3);
+            var card = Card.Attack("Practiced Hand", energyCost: 1, damage: 0);
+            player.AddToDrawPile(new[] { card });
+            player.StartTurn(cardsToDraw: 1);
+
+            player.ExhaustFromHand(card);
+
+            Assert.That(player.Hand.Contains(card), Is.False);
+            Assert.That(player.ExhaustPile.Contains(card), Is.True);
+        }
+
+        [Test]
+        public void ExhaustFromHand_DoesNotAddToDiscardPile()
+        {
+            var player = new Player(startingEnergy: 3);
+            var card = Card.Attack("Practiced Hand", energyCost: 1, damage: 0);
+            player.AddToDrawPile(new[] { card });
+            player.StartTurn(cardsToDraw: 1);
+
+            player.ExhaustFromHand(card);
+
+            Assert.That(player.DiscardPile.Contains(card), Is.False);
+        }
+
+        [Test]
+        public void AddTrigger_AddsToTriggersList()
+        {
+            var player = new Player(startingEnergy: 3);
+            var trigger = new TriggeredEffect(TriggerEvent.TurnStarted, new GainVolleyEffect(1));
+
+            player.AddTrigger(trigger);
+
+            Assert.That(player.Triggers.Contains(trigger), Is.True);
+        }
+
+        [Test]
         public void GainStrength_IncreasesStrength()
         {
             var player = new Player(startingEnergy: 3);

@@ -19,6 +19,8 @@ namespace Pantheon.Core.Combat
             Player = player;
             Enemies = enemies;
             Outcome = CombatOutcome.InProgress;
+
+            CombatResolver.FireTriggers(Player, TriggerEvent.CombatStarted, Enemy, Enemies);
         }
 
         public void PlayCard(Card card, Enemy target)
@@ -27,9 +29,16 @@ namespace Pantheon.Core.Combat
             CheckOutcome();
         }
 
+        public void StartPlayerTurn(int cardsToDraw)
+        {
+            Player.StartTurn(cardsToDraw);
+            CombatResolver.FireTriggers(Player, TriggerEvent.TurnStarted, Enemy, Enemies);
+        }
+
         public void EndPlayerTurn()
         {
             Player.EndTurn();
+            CombatResolver.FireTriggers(Player, TriggerEvent.TurnEnded, Enemy, Enemies);
             CheckOutcome();
 
             if (Outcome != CombatOutcome.InProgress)

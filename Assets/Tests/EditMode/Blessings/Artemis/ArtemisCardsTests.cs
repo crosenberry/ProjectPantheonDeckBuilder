@@ -474,5 +474,46 @@ namespace Pantheon.Core.Tests.Blessings.Artemis
 
             Assert.That(distinctCount, Is.EqualTo(10));
         }
+
+        [Test]
+        public void PracticedHand_IsPowerTaggedExhaust()
+        {
+            var card = Core.Blessings.Artemis.ArtemisCards.PracticedHand();
+
+            Assert.That(card.Type, Is.EqualTo(CardType.Power));
+            Assert.That(card.Tags.Contains(CardTag.Exhaust), Is.True);
+        }
+
+        [Test]
+        public void PracticedHand_WhenPlayed_ExhaustsRatherThanDiscards()
+        {
+            var player = new Player(startingEnergy: 1);
+            var enemy = new Enemy(maxHP: 42);
+            var card = Core.Blessings.Artemis.ArtemisCards.PracticedHand();
+            player.AddToDrawPile(new[] { card });
+            player.StartTurn(cardsToDraw: 1);
+
+            CombatResolver.PlayCard(player, card, enemy);
+
+            Assert.That(player.ExhaustPile.Contains(card), Is.True);
+            Assert.That(player.DiscardPile.Contains(card), Is.False);
+        }
+
+        [Test]
+        public void PracticedHand_GrantsVolleyAtTheStartOfEachSubsequentTurn()
+        {
+            var player = new Player(startingEnergy: 3, startingHP: 70, new SystemRandom());
+            var enemy = new Enemy(maxHP: 42, attackDamage: 0);
+            var card = Core.Blessings.Artemis.ArtemisCards.PracticedHand();
+            player.AddToDrawPile(new[] { card });
+            var combat = new CombatEncounter(player, enemy);
+            combat.StartPlayerTurn(cardsToDraw: 1);
+            combat.PlayCard(card, enemy);
+
+            combat.EndPlayerTurn();
+            combat.StartPlayerTurn(cardsToDraw: 0);
+
+            Assert.That(player.Volley, Is.EqualTo(1));
+        }
     }
 }

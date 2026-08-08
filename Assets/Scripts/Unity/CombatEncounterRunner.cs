@@ -20,9 +20,9 @@ namespace Pantheon.Unity
             var enemy = GreekEnemies.HopliteSkirmisher(random);
 
             player.AddToDrawPile(ArtemisCards.StarterDeck());
-            player.StartTurn(cardsToDraw: CardsDrawnPerTurn);
 
             Encounter = new CombatEncounter(player, enemy);
+            Encounter.StartPlayerTurn(cardsToDraw: CardsDrawnPerTurn);
         }
 
         public void PlayCard(Card card)
@@ -41,7 +41,7 @@ namespace Pantheon.Unity
 
             if (Encounter.Outcome == CombatOutcome.InProgress)
             {
-                Encounter.Player.StartTurn(cardsToDraw: CardsDrawnPerTurn);
+                Encounter.StartPlayerTurn(cardsToDraw: CardsDrawnPerTurn);
             }
         }
     }
