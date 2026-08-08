@@ -277,5 +277,75 @@ namespace Pantheon.Core.Tests.Combat
 
             Assert.Throws<InvalidOperationException>(() => combat.PlayCard(phantomCard, enemy));
         }
+
+        [Test]
+        public void Constructor_FiresCombatStartedTriggers()
+        {
+            var player = new Player(startingEnergy: 3);
+            player.AddTrigger(new TriggeredEffect(TriggerEvent.CombatStarted, new GainVolleyEffect(1)));
+            var enemy = new Enemy(maxHP: 42);
+
+            var combat = new CombatEncounter(player, enemy);
+
+            Assert.That(player.Volley, Is.EqualTo(1));
+        }
+
+        [Test]
+        public void StartPlayerTurn_DrawsCardsLikePlayerStartTurn()
+        {
+            var player = new Player(startingEnergy: 3);
+            var deck = new[]
+            {
+                Card.Attack("Card 1", energyCost: 1, damage: 1),
+                Card.Attack("Card 2", energyCost: 1, damage: 1)
+            };
+            player.AddToDrawPile(deck);
+            var enemy = new Enemy(maxHP: 42);
+            var combat = new CombatEncounter(player, enemy);
+
+            combat.StartPlayerTurn(cardsToDraw: 2);
+
+            Assert.That(player.Hand.Count, Is.EqualTo(2));
+        }
+
+        [Test]
+        public void StartPlayerTurn_FiresTurnStartedTriggers()
+        {
+            var player = new Player(startingEnergy: 3);
+            player.AddTrigger(new TriggeredEffect(TriggerEvent.TurnStarted, new GainVolleyEffect(1)));
+            var enemy = new Enemy(maxHP: 42);
+            var combat = new CombatEncounter(player, enemy);
+
+            combat.StartPlayerTurn(cardsToDraw: 0);
+
+            Assert.That(player.Volley, Is.EqualTo(1));
+        }
+
+        [Test]
+        public void EndPlayerTurn_FiresTurnEndedTriggers()
+        {
+            var player = new Player(startingEnergy: 3, startingHP: 70, new SystemRandom());
+            var enemy = new Enemy(maxHP: 42, attackDamage: 0);
+            var combat = new CombatEncounter(player, enemy);
+            player.AddTrigger(new TriggeredEffect(TriggerEvent.TurnEnded, new GainVolleyEffect(1)));
+
+            combat.EndPlayerTurn();
+
+            Assert.That(player.Volley, Is.EqualTo(1));
+        }
+
+        [Test]
+        public void EndPlayerTurn_TurnEndedTriggerSeesVolleyBeforeNextTurnReset()
+        {
+            var player = new Player(startingEnergy: 3, startingHP: 70, new SystemRandom());
+            var enemy = new Enemy(maxHP: 42, attackDamage: 0);
+            var combat = new CombatEncounter(player, enemy);
+            player.GainVolley(3);
+            player.AddTrigger(new TriggeredEffect(TriggerEvent.TurnEnded, new ConsumeVolleyDamageEffect(damagePerPoint: 5)));
+
+            combat.EndPlayerTurn();
+
+            Assert.That(enemy.CurrentHP, Is.EqualTo(27));
+        }
     }
 }

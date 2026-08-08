@@ -20,12 +20,25 @@ namespace Pantheon.Core.Combat
             var effectiveCost = isShot ? System.Math.Max(0, card.EnergyCost - player.ShotCostReductionThisTurn) : card.EnergyCost;
 
             player.SpendEnergy(effectiveCost);
-            player.DiscardFromHand(card);
+
+            if (card.Tags.Contains(CardTag.Exhaust))
+            {
+                player.ExhaustFromHand(card);
+            }
+            else
+            {
+                player.DiscardFromHand(card);
+            }
 
             var context = new CardEffectContext(player, target, allEnemies);
             foreach (var effect in card.Effects)
             {
                 effect.Apply(context);
+            }
+
+            foreach (var trigger in card.Triggers)
+            {
+                player.AddTrigger(trigger);
             }
 
             if (isShot)
@@ -65,6 +78,19 @@ namespace Pantheon.Core.Combat
             }
 
             enemy.ChooseNextIntent();
+        }
+
+        public static void FireTriggers(Player player, TriggerEvent triggerEvent, Enemy target, System.Collections.Generic.IReadOnlyList<Enemy> allEnemies)
+        {
+            var context = new CardEffectContext(player, target, allEnemies);
+
+            foreach (var trigger in player.Triggers)
+            {
+                if (trigger.Event == triggerEvent)
+                {
+                    trigger.Effect.Apply(context);
+                }
+            }
         }
 
         private static void ApplyStatus(ICombatant combatant, StatusType status, int amount)

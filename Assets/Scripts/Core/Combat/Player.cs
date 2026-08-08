@@ -7,6 +7,8 @@ namespace Pantheon.Core.Combat
         private readonly List<Card> _drawPile = new List<Card>();
         private readonly List<Card> _discardPile = new List<Card>();
         private readonly List<Card> _hand = new List<Card>();
+        private readonly List<Card> _exhaustPile = new List<Card>();
+        private readonly List<TriggeredEffect> _triggers = new List<TriggeredEffect>();
         private readonly IRandom _random;
 
         public int CurrentEnergy { get; private set; }
@@ -24,6 +26,8 @@ namespace Pantheon.Core.Combat
         public IReadOnlyList<Card> DrawPile => _drawPile;
         public IReadOnlyList<Card> DiscardPile => _discardPile;
         public IReadOnlyList<Card> Hand => _hand;
+        public IReadOnlyList<Card> ExhaustPile => _exhaustPile;
+        public IReadOnlyList<TriggeredEffect> Triggers => _triggers;
 
         public Player(int startingEnergy) : this(startingEnergy, new SystemRandom())
         {
@@ -113,6 +117,17 @@ namespace Pantheon.Core.Combat
         {
             _hand.Remove(card);
             _discardPile.Add(card);
+        }
+
+        public void ExhaustFromHand(Card card)
+        {
+            _hand.Remove(card);
+            _exhaustPile.Add(card);
+        }
+
+        public void AddTrigger(TriggeredEffect trigger)
+        {
+            _triggers.Add(trigger);
         }
 
         public void GainBlock(int amount)

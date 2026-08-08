@@ -9,14 +9,16 @@ namespace Pantheon.Core.Combat
         public CardType Type { get; }
         public IReadOnlyList<CardEffect> Effects { get; }
         public IReadOnlyList<CardTag> Tags { get; }
+        public IReadOnlyList<TriggeredEffect> Triggers { get; }
 
-        public Card(string name, int energyCost, CardType type, IReadOnlyList<CardEffect> effects, IReadOnlyList<CardTag> tags = null)
+        public Card(string name, int energyCost, CardType type, IReadOnlyList<CardEffect> effects, IReadOnlyList<CardTag> tags = null, IReadOnlyList<TriggeredEffect> triggers = null)
         {
             Name = name;
             EnergyCost = energyCost;
             Type = type;
             Effects = effects;
             Tags = tags ?? System.Array.Empty<CardTag>();
+            Triggers = triggers ?? System.Array.Empty<TriggeredEffect>();
         }
 
         public static Card Attack(string name, int energyCost, int damage, IReadOnlyList<CardTag> tags = null)
