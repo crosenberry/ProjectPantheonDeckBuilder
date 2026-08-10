@@ -448,6 +448,137 @@ namespace Pantheon.Core.Tests.Blessings.Artemis
         }
 
         [Test]
+        public void QuickShotCautious_DealsSevenDamage()
+        {
+            var player = new Player(startingEnergy: 3);
+            var enemy = new Enemy(maxHP: 42);
+            var card = Core.Blessings.Artemis.ArtemisCards.QuickShotCautious();
+            player.AddToDrawPile(new[] { card });
+            player.StartTurn(cardsToDraw: 1);
+
+            CombatResolver.PlayCard(player, card, enemy);
+
+            Assert.That(enemy.CurrentHP, Is.EqualTo(35));
+        }
+
+        [Test]
+        public void QuickShotBold_DealsEightDamage()
+        {
+            var player = new Player(startingEnergy: 3);
+            var enemy = new Enemy(maxHP: 42);
+            var card = Core.Blessings.Artemis.ArtemisCards.QuickShotBold();
+            player.AddToDrawPile(new[] { card });
+            player.StartTurn(cardsToDraw: 1);
+
+            CombatResolver.PlayCard(player, card, enemy);
+
+            Assert.That(enemy.CurrentHP, Is.EqualTo(34));
+        }
+
+        [Test]
+        public void QuickShotDefiant_DealsEightDamageAtZeroCost()
+        {
+            var player = new Player(startingEnergy: 0);
+            var enemy = new Enemy(maxHP: 42);
+            var card = Core.Blessings.Artemis.ArtemisCards.QuickShotDefiant();
+            player.AddToDrawPile(new[] { card });
+            player.StartTurn(cardsToDraw: 1);
+
+            CombatResolver.PlayCard(player, card, enemy);
+
+            Assert.That(enemy.CurrentHP, Is.EqualTo(34));
+            Assert.That(player.CurrentEnergy, Is.EqualTo(0));
+        }
+
+        [Test]
+        public void SideStepCautious_GrantsSixBlock()
+        {
+            var player = new Player(startingEnergy: 3);
+            var enemy = new Enemy(maxHP: 42);
+            var card = Core.Blessings.Artemis.ArtemisCards.SideStepCautious();
+            player.AddToDrawPile(new[] { card });
+            player.StartTurn(cardsToDraw: 1);
+
+            CombatResolver.PlayCard(player, card, enemy);
+
+            Assert.That(player.CurrentBlock, Is.EqualTo(6));
+        }
+
+        [Test]
+        public void SideStepBold_GrantsSevenBlock()
+        {
+            var player = new Player(startingEnergy: 3);
+            var enemy = new Enemy(maxHP: 42);
+            var card = Core.Blessings.Artemis.ArtemisCards.SideStepBold();
+            player.AddToDrawPile(new[] { card });
+            player.StartTurn(cardsToDraw: 1);
+
+            CombatResolver.PlayCard(player, card, enemy);
+
+            Assert.That(player.CurrentBlock, Is.EqualTo(7));
+        }
+
+        [Test]
+        public void SideStepDefiant_GrantsSevenBlockAndOneVolley()
+        {
+            var player = new Player(startingEnergy: 3);
+            var enemy = new Enemy(maxHP: 42);
+            var card = Core.Blessings.Artemis.ArtemisCards.SideStepDefiant();
+            player.AddToDrawPile(new[] { card });
+            player.StartTurn(cardsToDraw: 1);
+
+            CombatResolver.PlayCard(player, card, enemy);
+
+            Assert.That(player.CurrentBlock, Is.EqualTo(7));
+            Assert.That(player.Volley, Is.EqualTo(1));
+        }
+
+        [Test]
+        public void HuntersMarkCautious_DealsEightDamageAppliesThreeExposed()
+        {
+            var player = new Player(startingEnergy: 3);
+            var enemy = new Enemy(maxHP: 42);
+            var card = Core.Blessings.Artemis.ArtemisCards.HuntersMarkCautious();
+            player.AddToDrawPile(new[] { card });
+            player.StartTurn(cardsToDraw: 1);
+
+            CombatResolver.PlayCard(player, card, enemy);
+
+            Assert.That(enemy.CurrentHP, Is.EqualTo(34));
+            Assert.That(enemy.Exposed, Is.EqualTo(3));
+        }
+
+        [Test]
+        public void HuntersMarkBold_DealsNineDamageAppliesThreeExposed()
+        {
+            var player = new Player(startingEnergy: 3);
+            var enemy = new Enemy(maxHP: 42);
+            var card = Core.Blessings.Artemis.ArtemisCards.HuntersMarkBold();
+            player.AddToDrawPile(new[] { card });
+            player.StartTurn(cardsToDraw: 1);
+
+            CombatResolver.PlayCard(player, card, enemy);
+
+            Assert.That(enemy.CurrentHP, Is.EqualTo(33));
+            Assert.That(enemy.Exposed, Is.EqualTo(3));
+        }
+
+        [Test]
+        public void HuntersMarkDefiant_DealsNineDamageAppliesFourExposed()
+        {
+            var player = new Player(startingEnergy: 3);
+            var enemy = new Enemy(maxHP: 42);
+            var card = Core.Blessings.Artemis.ArtemisCards.HuntersMarkDefiant();
+            player.AddToDrawPile(new[] { card });
+            player.StartTurn(cardsToDraw: 1);
+
+            CombatResolver.PlayCard(player, card, enemy);
+
+            Assert.That(enemy.CurrentHP, Is.EqualTo(33));
+            Assert.That(enemy.Exposed, Is.EqualTo(4));
+        }
+
+        [Test]
         public void StarterDeck_ReturnsTenCards()
         {
             var deck = Core.Blessings.Artemis.ArtemisCards.StarterDeck().ToList();

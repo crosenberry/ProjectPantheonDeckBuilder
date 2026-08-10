@@ -10,9 +10,43 @@ namespace Pantheon.Core.Blessings.Artemis
             return Card.Attack("Quick Shot", energyCost: 1, damage: 6, tags: new[] { CardTag.Shot });
         }
 
+        public static Card QuickShotCautious()
+        {
+            return Card.Attack("Quick Shot+ (Cautious)", energyCost: 1, damage: 7, tags: new[] { CardTag.Shot });
+        }
+
+        public static Card QuickShotBold()
+        {
+            return Card.Attack("Quick Shot+ (Bold)", energyCost: 1, damage: 8, tags: new[] { CardTag.Shot });
+        }
+
+        public static Card QuickShotDefiant()
+        {
+            return Card.Attack("Quick Shot+ (Defiant)", energyCost: 0, damage: 8, tags: new[] { CardTag.Shot });
+        }
+
         public static Card SideStep()
         {
             return Card.Skill("Side Step", energyCost: 1, block: 5);
+        }
+
+        public static Card SideStepCautious()
+        {
+            return Card.Skill("Side Step+ (Cautious)", energyCost: 1, block: 6);
+        }
+
+        public static Card SideStepBold()
+        {
+            return Card.Skill("Side Step+ (Bold)", energyCost: 1, block: 7);
+        }
+
+        public static Card SideStepDefiant()
+        {
+            return new Card("Side Step+ (Defiant)", energyCost: 1, CardType.Skill, new CardEffect[]
+            {
+                new GainBlockEffect(7),
+                new GainVolleyEffect(1)
+            });
         }
 
         public static Card HuntersMark()
@@ -21,6 +55,33 @@ namespace Pantheon.Core.Blessings.Artemis
             {
                 new DealDamageEffect(8),
                 new ApplyStatusEffect(StatusType.Exposed, 2, EffectTarget.Enemy)
+            }, tags: new[] { CardTag.Shot });
+        }
+
+        public static Card HuntersMarkCautious()
+        {
+            return new Card("Hunter's Mark+ (Cautious)", energyCost: 2, CardType.Attack, new CardEffect[]
+            {
+                new DealDamageEffect(8),
+                new ApplyStatusEffect(StatusType.Exposed, 3, EffectTarget.Enemy)
+            }, tags: new[] { CardTag.Shot });
+        }
+
+        public static Card HuntersMarkBold()
+        {
+            return new Card("Hunter's Mark+ (Bold)", energyCost: 2, CardType.Attack, new CardEffect[]
+            {
+                new DealDamageEffect(9),
+                new ApplyStatusEffect(StatusType.Exposed, 3, EffectTarget.Enemy)
+            }, tags: new[] { CardTag.Shot });
+        }
+
+        public static Card HuntersMarkDefiant()
+        {
+            return new Card("Hunter's Mark+ (Defiant)", energyCost: 2, CardType.Attack, new CardEffect[]
+            {
+                new DealDamageEffect(9),
+                new ApplyStatusEffect(StatusType.Exposed, 4, EffectTarget.Enemy)
             }, tags: new[] { CardTag.Shot });
         }
 
