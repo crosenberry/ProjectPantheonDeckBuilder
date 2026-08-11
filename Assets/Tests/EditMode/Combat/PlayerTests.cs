@@ -410,6 +410,28 @@ namespace Pantheon.Core.Tests.Combat
         }
 
         [Test]
+        public void Heal_BelowMaxHP_IncreasesCurrentHP()
+        {
+            var player = new Player(startingEnergy: 3, startingHP: 70, new SystemRandom());
+            player.TakeDamage(20);
+
+            player.Heal(10);
+
+            Assert.That(player.CurrentHP, Is.EqualTo(60));
+        }
+
+        [Test]
+        public void Heal_AmountWouldExceedMaxHP_ClampsAtMaxHP()
+        {
+            var player = new Player(startingEnergy: 3, startingHP: 70, new SystemRandom());
+            player.TakeDamage(5);
+
+            player.Heal(999);
+
+            Assert.That(player.CurrentHP, Is.EqualTo(70));
+        }
+
+        [Test]
         public void StartTurn_StrengthDoesNotDecay()
         {
             var player = new Player(startingEnergy: 3);

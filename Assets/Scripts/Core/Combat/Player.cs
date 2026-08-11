@@ -185,5 +185,10 @@ namespace Pantheon.Core.Combat
             var remaining = amount - blocked;
             CurrentHP = System.Math.Max(0, CurrentHP - remaining);
         }
+
+        public void Heal(int amount)
+        {
+            CurrentHP = System.Math.Min(MaxHP, CurrentHP + amount);
+        }
     }
 }
