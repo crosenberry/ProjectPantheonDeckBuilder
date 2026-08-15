@@ -12,6 +12,8 @@ namespace Pantheon.Unity
         public List<Button> NodeButtons;
         public Text StatusText;
 
+        private Stage _lastWarnedInsufficientButtonsStage;
+
         private void Update()
         {
             if (Controller == null || Controller.CurrentRun == null)
@@ -21,6 +23,12 @@ namespace Pantheon.Unity
 
             var run = Controller.CurrentRun;
             var stage = run.CurrentStage;
+
+            if (NodeButtons.Count < stage.Nodes.Count && !ReferenceEquals(stage, _lastWarnedInsufficientButtonsStage))
+            {
+                Debug.LogWarning($"MapView has {NodeButtons.Count} NodeButtons but the current stage has {stage.Nodes.Count} nodes - nodes beyond the pool won't be shown. Add more buttons to the MapPanel in the scene.");
+                _lastWarnedInsufficientButtonsStage = stage;
+            }
 
             if (StatusText != null)
             {
