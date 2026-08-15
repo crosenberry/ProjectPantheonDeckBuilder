@@ -12,6 +12,8 @@ namespace Pantheon.Unity
 {
     public class RunController : MonoBehaviour
     {
+        private const int RestSiteHealAmount = 15;
+
         public CombatEncounterRunner CombatRunner;
         public GameObject MapPanel;
         public GameObject[] CombatPanels;
@@ -34,7 +36,15 @@ namespace Pantheon.Unity
 
         public void EnterNode(int nodeIndex)
         {
+            var node = CurrentRun.CurrentStage.Nodes[nodeIndex];
             CurrentRun.CurrentStage.MoveTo(nodeIndex);
+
+            if (node.Type == NodeType.Rest)
+            {
+                Player.Heal(RestSiteHealAmount);
+                return;
+            }
+
             Player.PrepareForCombat(_deck);
             CombatRunner.BeginEncounter(Player, BuildEnemies(nodeIndex));
             InCombat = true;

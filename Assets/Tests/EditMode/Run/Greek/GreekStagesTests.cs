@@ -8,14 +8,15 @@ namespace Pantheon.Core.Tests.Run.Greek
     public class GreekStagesTests
     {
         [Test]
-        public void SampleStage_HasThreeNodesEndingInBoss()
+        public void SampleStage_HasFourNodesEndingInBoss()
         {
             var stage = GreekStages.SampleStage();
 
-            Assert.That(stage.Nodes.Count, Is.EqualTo(3));
+            Assert.That(stage.Nodes.Count, Is.EqualTo(4));
             Assert.That(stage.Nodes[0].Type, Is.EqualTo(NodeType.Combat));
-            Assert.That(stage.Nodes[1].Type, Is.EqualTo(NodeType.Combat));
-            Assert.That(stage.Nodes[2].Type, Is.EqualTo(NodeType.Boss));
+            Assert.That(stage.Nodes[1].Type, Is.EqualTo(NodeType.Rest));
+            Assert.That(stage.Nodes[2].Type, Is.EqualTo(NodeType.Combat));
+            Assert.That(stage.Nodes[3].Type, Is.EqualTo(NodeType.Boss));
         }
 
         [Test]
@@ -34,6 +35,7 @@ namespace Pantheon.Core.Tests.Run.Greek
             stage.MoveTo(0);
             stage.MoveTo(1);
             stage.MoveTo(2);
+            stage.MoveTo(3);
 
             Assert.That(stage.IsComplete, Is.True);
         }
