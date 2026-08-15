@@ -1,9 +1,7 @@
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using Pantheon.Core;
 using Pantheon.Core.Combat;
-using Pantheon.Core.Blessings.Artemis;
-using Pantheon.Core.Enemies.Greek;
 
 namespace Pantheon.Unity
 {
@@ -13,15 +11,9 @@ namespace Pantheon.Unity
 
         public CombatEncounter Encounter { get; private set; }
 
-        private void Start()
+        public void BeginEncounter(Player player, IReadOnlyList<Enemy> enemies)
         {
-            var random = new SystemRandom();
-            var player = new Player(startingEnergy: 3, startingHP: 70, random);
-            var enemy = GreekEnemies.HopliteSkirmisher(random);
-
-            player.AddToDrawPile(ArtemisCards.StarterDeck());
-
-            Encounter = new CombatEncounter(player, enemy);
+            Encounter = new CombatEncounter(player, enemies);
             Encounter.StartPlayerTurn(cardsToDraw: CardsDrawnPerTurn);
         }
 
@@ -32,7 +24,13 @@ namespace Pantheon.Unity
                 return;
             }
 
-            Encounter.PlayCard(card, Encounter.Enemy);
+            var target = Encounter.Enemies.FirstOrDefault(enemy => enemy.CurrentHP > 0);
+            if (target == null)
+            {
+                return;
+            }
+
+            Encounter.PlayCard(card, target);
         }
 
         public void EndTurn()
