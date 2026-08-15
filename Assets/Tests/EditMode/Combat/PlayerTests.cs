@@ -432,6 +432,68 @@ namespace Pantheon.Core.Tests.Combat
         }
 
         [Test]
+        public void PrepareForCombat_ClearsAllPilesAndFillsDrawPile()
+        {
+            var player = new Player(startingEnergy: 3);
+            var oldCards = Enumerable.Range(1, 4).Select(i => Card.Attack($"Old {i}", energyCost: 1, damage: 1)).ToList();
+            player.AddToDrawPile(oldCards);
+            player.StartTurn(cardsToDraw: 2);
+            player.ExhaustFromHand(player.Hand[0]);
+            player.EndTurn();
+            var newDeck = Enumerable.Range(1, 3).Select(i => Card.Attack($"New {i}", energyCost: 1, damage: 1)).ToList();
+
+            player.PrepareForCombat(newDeck);
+
+            Assert.That(player.Hand, Is.Empty);
+            Assert.That(player.DiscardPile, Is.Empty);
+            Assert.That(player.ExhaustPile, Is.Empty);
+            Assert.That(player.DrawPile, Is.EquivalentTo(newDeck));
+        }
+
+        [Test]
+        public void PrepareForCombat_ClearsTriggers()
+        {
+            var player = new Player(startingEnergy: 3);
+            player.AddTrigger(new TriggeredEffect(TriggerEvent.TurnStarted, new GainVolleyEffect(1)));
+
+            player.PrepareForCombat(Enumerable.Empty<Card>());
+
+            Assert.That(player.Triggers, Is.Empty);
+        }
+
+        [Test]
+        public void PrepareForCombat_ResetsCombatScopedStats()
+        {
+            var player = new Player(startingEnergy: 3);
+            player.GainStrength(2);
+            player.ApplyExposed(2);
+            player.ApplyDrained(2);
+            player.ApplySundered(2);
+            player.GainBlock(5);
+            player.GainVolley(3);
+
+            player.PrepareForCombat(Enumerable.Empty<Card>());
+
+            Assert.That(player.Strength, Is.EqualTo(0));
+            Assert.That(player.Exposed, Is.EqualTo(0));
+            Assert.That(player.Drained, Is.EqualTo(0));
+            Assert.That(player.Sundered, Is.EqualTo(0));
+            Assert.That(player.CurrentBlock, Is.EqualTo(0));
+            Assert.That(player.Volley, Is.EqualTo(0));
+        }
+
+        [Test]
+        public void PrepareForCombat_DoesNotChangeHP()
+        {
+            var player = new Player(startingEnergy: 3, startingHP: 70, new SystemRandom());
+            player.TakeDamage(25);
+
+            player.PrepareForCombat(Enumerable.Empty<Card>());
+
+            Assert.That(player.CurrentHP, Is.EqualTo(45));
+        }
+
+        [Test]
         public void StartTurn_StrengthDoesNotDecay()
         {
             var player = new Player(startingEnergy: 3);

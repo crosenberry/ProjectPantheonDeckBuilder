@@ -190,5 +190,29 @@ namespace Pantheon.Core.Combat
         {
             CurrentHP = System.Math.Min(MaxHP, CurrentHP + amount);
         }
+
+        // Resets all combat-scoped state for a fresh encounter; HP persists across
+        // the run. Clears every trigger, which is correct for card-granted triggers
+        // (Power cards re-register by being played again) - once Enhancements enter
+        // the run flow, run-persistent triggers will need to be re-granted after
+        // this call or split into their own list.
+        public void PrepareForCombat(IEnumerable<Card> drawPile)
+        {
+            _hand.Clear();
+            _drawPile.Clear();
+            _discardPile.Clear();
+            _exhaustPile.Clear();
+            _triggers.Clear();
+            _drawPile.AddRange(drawPile);
+
+            CurrentBlock = 0;
+            Strength = 0;
+            Exposed = 0;
+            Drained = 0;
+            Sundered = 0;
+            Volley = 0;
+            ShotsPlayedThisTurn = 0;
+            ShotCostReductionThisTurn = 0;
+        }
     }
 }
