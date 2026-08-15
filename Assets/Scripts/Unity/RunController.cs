@@ -5,6 +5,8 @@ using Pantheon.Core;
 using Pantheon.Core.Blessings.Artemis;
 using Pantheon.Core.Combat;
 using Pantheon.Core.Enemies.Greek;
+using Pantheon.Core.Meta;
+using Pantheon.Core.Meta.Greek;
 using Pantheon.Core.Run;
 using Pantheon.Core.Run.Greek;
 
@@ -13,14 +15,19 @@ namespace Pantheon.Unity
     public class RunController : MonoBehaviour
     {
         private const int RestSiteHealAmount = 15;
+        private const int BossExclusiveChancePercent = 10;
 
         public CombatEncounterRunner CombatRunner;
         public GameObject MapPanel;
         public GameObject[] CombatPanels;
+        public GameObject BossRewardPanel;
 
         public Core.Run.Run CurrentRun { get; private set; }
         public Player Player { get; private set; }
         public bool InCombat { get; private set; }
+        public bool AwaitingBossReward { get; private set; }
+        public IReadOnlyList<Relic> OfferedBossRelics { get; private set; }
+        public List<Relic> OwnedRelics { get; } = new List<Relic>();
 
         private IRandom _random;
         private List<Card> _deck;
@@ -30,7 +37,11 @@ namespace Pantheon.Unity
             _random = new SystemRandom();
             Player = new Player(startingEnergy: 3, startingHP: 70, _random);
             _deck = ArtemisCards.StarterDeck().ToList();
-            CurrentRun = new Core.Run.Run(stageCount: 1, GreekStages.SampleStage());
+            // stageCount: 2 to prove Run.AdvanceToNextStage's chaining, not a
+            // tuned run length - both stages reuse the same sample layout until
+            // a second mythology's content exists to chain to via a real Rift
+            // pick (deferred, see the boss-reward-wiring slice's scope note).
+            CurrentRun = new Core.Run.Run(stageCount: 2, GreekStages.SampleStage());
             TogglePanels();
         }
 
@@ -51,6 +62,29 @@ namespace Pantheon.Unity
             TogglePanels();
         }
 
+        public void ClaimBossReward(Relic relic)
+        {
+            if (OfferedBossRelics == null || !OfferedBossRelics.Contains(relic))
+            {
+                return;
+            }
+
+            OwnedRelics.Add(relic);
+            OfferedBossRelics = null;
+            AwaitingBossReward = false;
+
+            if (CurrentRun.CompletedStageCount + 1 >= CurrentRun.StageCount)
+            {
+                CurrentRun.CompleteFinalStage();
+            }
+            else
+            {
+                CurrentRun.AdvanceToNextStage(GreekStages.SampleStage());
+            }
+
+            TogglePanels();
+        }
+
         private void Update()
         {
             if (!InCombat || CombatRunner.Encounter == null)
@@ -65,13 +99,19 @@ namespace Pantheon.Unity
             }
 
             InCombat = false;
+
             if (outcome == CombatOutcome.PlayerLost)
             {
                 CurrentRun.RecordDefeat();
+                TogglePanels();
+                return;
             }
-            else if (CurrentRun.CurrentStage.IsComplete)
+
+            var currentNode = CurrentRun.CurrentStage.Nodes[CurrentRun.CurrentStage.CurrentNodeIndex.Value];
+            if (currentNode.Type == NodeType.Boss)
             {
-                CurrentRun.CompleteFinalStage();
+                OfferedBossRelics = BossReward.Roll(GreekRelics.RegularPool().ToList(), GreekRelics.TalossCore(), _random, BossExclusiveChancePercent);
+                AwaitingBossReward = true;
             }
 
             TogglePanels();
@@ -100,7 +140,7 @@ namespace Pantheon.Unity
         {
             if (MapPanel != null)
             {
-                MapPanel.SetActive(!InCombat);
+                MapPanel.SetActive(!InCombat && !AwaitingBossReward);
             }
 
             if (CombatPanels != null)
@@ -112,6 +152,11 @@ namespace Pantheon.Unity
                         panel.SetActive(InCombat);
                     }
                 }
+            }
+
+            if (BossRewardPanel != null)
+            {
+                BossRewardPanel.SetActive(AwaitingBossReward);
             }
         }
     }
