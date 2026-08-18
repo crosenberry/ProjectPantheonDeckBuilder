@@ -410,6 +410,49 @@ namespace Pantheon.Core.Tests.Combat
         }
 
         [Test]
+        public void GainStorm_IncreasesStorm()
+        {
+            var player = new Player(startingEnergy: 3);
+
+            player.GainStorm(2);
+
+            Assert.That(player.Storm, Is.EqualTo(2));
+        }
+
+        [Test]
+        public void StartTurn_DoesNotResetStorm()
+        {
+            var player = new Player(startingEnergy: 3);
+            player.GainStorm(2);
+
+            player.StartTurn(cardsToDraw: 0);
+
+            Assert.That(player.Storm, Is.EqualTo(2));
+        }
+
+        [Test]
+        public void ConsumeStorm_ResetsStormToZero()
+        {
+            var player = new Player(startingEnergy: 3);
+            player.GainStorm(3);
+
+            player.ConsumeStorm();
+
+            Assert.That(player.Storm, Is.EqualTo(0));
+        }
+
+        [Test]
+        public void ConsumeStorm_ReturnsAmountConsumed()
+        {
+            var player = new Player(startingEnergy: 3);
+            player.GainStorm(3);
+
+            var consumed = player.ConsumeStorm();
+
+            Assert.That(consumed, Is.EqualTo(3));
+        }
+
+        [Test]
         public void Heal_BelowMaxHP_IncreasesCurrentHP()
         {
             var player = new Player(startingEnergy: 3, startingHP: 70, new SystemRandom());
@@ -471,6 +514,7 @@ namespace Pantheon.Core.Tests.Combat
             player.ApplySundered(2);
             player.GainBlock(5);
             player.GainVolley(3);
+            player.GainStorm(3);
 
             player.PrepareForCombat(Enumerable.Empty<Card>());
 
@@ -480,6 +524,7 @@ namespace Pantheon.Core.Tests.Combat
             Assert.That(player.Sundered, Is.EqualTo(0));
             Assert.That(player.CurrentBlock, Is.EqualTo(0));
             Assert.That(player.Volley, Is.EqualTo(0));
+            Assert.That(player.Storm, Is.EqualTo(0));
         }
 
         [Test]
