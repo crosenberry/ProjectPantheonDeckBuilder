@@ -31,7 +31,7 @@ Artemis goes all the way through combat → relics → enhancements → passive 
 | **M3** | Artemis meta-layer: Relics (Greek subset), Enhancements (Player/Minor/Major incl. her Mythic cards), Passive Tree (Mythos + her 17 nodes), Shop | `feature/trigger-system`, `feature/artemis-passive-tree`, `feature/artemis-relics`, `feature/artemis-enhancements`, `feature/shop` | A full run (not one fight) playable for Artemis | — |
 | **M4** | Map & run structure: node graph, stage progression, boss fights, next-stage selection (Prophecy family) | `feature/stage-map`, `feature/rest-site`, `feature/boss-reward`, `feature/rift-and-prophecy`, `feature/run` | Start-to-finish run, win or lose, for Artemis alone | **`v0.2`** — first complete Blessing |
 | **M5** | Thor: Storm resource, his card slice, Norse enemies, his passive tree, Syncretism made real | `feature/storm-resource`, `feature/thor-card-slice`, `feature/norse-enemies`, `feature/thor-passive-tree`, `feature/syncretism` | Second Blessing playable + a working cross-mythology fusion | **`v0.3`** |
-| **M6** | Anubis (Scale) | `feature/anubis-*` | Third Blessing playable | **`v0.4`** |
+| **M6** | Anubis: Scale resource, his card slice, Egyptian enemies, his passive tree | `feature/scale-resource`, `feature/anubis-card-slice`, `feature/egyptian-enemies`, `feature/anubis-passive-tree` | Third Blessing playable | **`v0.4`** |
 | **M7** | Sun Wukong (Form) | `feature/wukong-*` | All 4 Blessings playable | **`v0.5`** |
 | **M8** | Deferred differentiation work: Core Combat Vocabulary's *mechanical* redesign (if playtesting shows it's needed beyond the M1 naming pass) and Hook 2 (enemies using resource systems) | — | — | — |
 | **M9** | Co-op | — | — | — |
@@ -160,3 +160,29 @@ Unlike M1-M4, most of M5's *content* was already fully drafted before this sessi
 3. `feature/norse-enemies` — the 3 new enemies from `MinimalSampleSet-Norse.md`. Direct mirror of `feature/greek-enemies`.
 4. `feature/thor-passive-tree` — `ThorPassiveTree.Create()` from the already-fully-specified `Thor-PassiveTree.md`. Direct mirror of `feature/artemis-passive-tree`.
 5. `feature/syncretism` — the 4 shipped resource-interaction cards.
+
+### M6 — Anubis design session (complete)
+
+Third Blessing, same shape as M5's session: [Anubis-FullCardDraft.md](Characters/Anubis-FullCardDraft.md) (75 cards) and [Anubis-PassiveTree.md](Characters/Anubis-PassiveTree.md) (17 nodes, same template) both predate the TDD process. This session curated a playable slice, drafted the missing Egyptian enemy set, and resolved one genuine new-mechanic gap the full draft's own content exposed.
+
+**Already locked — confirmed, not re-decided:** Scale's rule shape (a signed value, -5 to +5, resets to 0 each combat, pushed by Order/+ and Chaos/− effects, payoffs read position rather than a stack count — [GDD §3.3](GameDesignDocument.md)), Anubis's three archetypes (Balance-keeper/Reaper/Ascendant, plus Flex), and Osiris's Rebirth staying a card rather than becoming a relic (resolved for all Blessings at once in [GDD §3.4](GameDesignDocument.md), the same ruling Thor's Deathless Rage got).
+
+**New decisions this session:**
+1. **Scale persists turn-to-turn within a combat** (same timing as Storm), resetting only at combat start — not a fresh call so much as making explicit something the GDD's "different *shape*, not different timing" framing left implicit. Only Volley resets every turn.
+2. **`CardTag.Order` / `CardTag.Chaos`** — the Scale-equivalent of `Shot`/`StormGenerating`, formalizing the GDD's own already-locked directional terms as enum values. Like `StormGenerating`, nothing in the curated slice actually reads these tags yet (no card currently filters on "is this an Order card" the way Pathfinder filters on Shot) — added anyway for labeling/future-extensibility consistency, matching the precedent `StormGenerating` already set.
+
+**Content curated/drafted this session:**
+1. **[Anubis-CardDraft.md](Characters/Anubis-CardDraft.md)** — a 25-card curated slice (10 starter + 5 per archetype path), mirroring the Artemis/Thor shape exactly. Judgment Incarnate, Devourer's Toll, and Ma'at's Ascension serve as each path's "finisher," same role Rain of Arrows / Thunderclap / Full Discharge-successor played before.
+2. **[MinimalSampleSet-Egyptian.md](Enemies/MinimalSampleSet-Egyptian.md)** — 3 new enemies (Ushabti Sentinel, Set's Cultist, Scarab Swarm) at the same power tiers as their Greek and Norse counterparts. Set's Cultist applies **Exposed**, completing the debuff-variety pattern (Greek: Drained, Norse: Sundered, Egyptian: Exposed) — all three universal debuffs now covered across the three minimal rosters.
+
+**Real judgment call, confirmed via direct question to the user (recommended option taken):**
+
+**"Choose one" cards deferred.** Three cards in the full draft (the starter card Scales of Judgment, plus Twin Rites and Harmonize) use a "Choose one: Scale +1 or Scale −1" shape — a genuinely new mechanic (an in-card player choice) nothing in Artemis's or Thor's kits ever needed. Same "don't force new architecture into a content slice" reasoning as Thor's Chain Bolt/Full Discharge swap: Twin Rites and Harmonize don't make the curated 25, and **Scales of Judgment is reworded to a fixed direction** (Scale +1) rather than dropped, since a starter deck needs its signature card to exist. Costs the card its original "teaches Scale is bidirectional from turn one" framing — worth recording honestly rather than glossing over, same standard this log has held to since the M3 relic revision.
+
+**Deliberately out of scope for M6** (per the roadmap table — Scale/cards/enemies/passive-tree only): Egyptian relics including Anubis's signature/starter relic, his Player/Minor/Major Enhancements, and an Egyptian Shop instance name. Same one-milestone-later pattern as Norse relics after M5's Thor combat slice.
+
+**Sequencing** — 4 branches (no Syncretism branch this time; a third Blessing doesn't automatically need a new fusion pairing, that's its own future scope decision, not required by M6):
+1. `feature/scale-resource` — `Player.Scale` (signed, clamped to [-5, 5], resets on `PrepareForCombat` not `StartTurn`) + `AdjustScaleEffect`/`SetScaleEffect`/`HealEffect` (the last one a first-time card-level wrapper for the `Player.Heal` method the Rest Site slice added) + `CardTag.Order`/`CardTag.Chaos`. Direct mirror of `feature/storm-resource`.
+2. `feature/anubis-card-slice` — the 25-card curated slice, including the new Scale-query effect classes (magnitude, sign, and range checks) the full draft's own sanity checks flagged as more complex than Volley/Storm's simple "how much do I have."
+3. `feature/egyptian-enemies` — the 3 new enemies from `MinimalSampleSet-Egyptian.md`. Direct mirror of `feature/norse-enemies`.
+4. `feature/anubis-passive-tree` — `AnubisPassiveTree.Create()` from the already-fully-specified `Anubis-PassiveTree.md`. Direct mirror of `feature/thor-passive-tree`.

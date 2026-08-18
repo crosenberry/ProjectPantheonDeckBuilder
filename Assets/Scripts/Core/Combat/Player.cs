@@ -22,6 +22,7 @@ namespace Pantheon.Core.Combat
         public int Sundered { get; private set; }
         public int Volley { get; private set; }
         public int Storm { get; private set; }
+        public int Scale { get; private set; }
         public int ShotsPlayedThisTurn { get; private set; }
         public int ShotCostReductionThisTurn { get; private set; }
         public IReadOnlyList<Card> DrawPile => _drawPile;
@@ -185,6 +186,19 @@ namespace Pantheon.Core.Combat
             return consumed;
         }
 
+        // Scale is bounded to [-5, 5] (GDD §3.3) - the first bounded resource;
+        // Volley/Storm are unbounded upward. Both AdjustScale (relative push,
+        // e.g. "Scale -1") and SetScale (absolute, e.g. "Set Scale to 0") clamp.
+        public void AdjustScale(int amount)
+        {
+            Scale = System.Math.Max(-5, System.Math.Min(5, Scale + amount));
+        }
+
+        public void SetScale(int value)
+        {
+            Scale = System.Math.Max(-5, System.Math.Min(5, value));
+        }
+
         public void RecordShotPlayed()
         {
             ShotsPlayedThisTurn += 1;
@@ -238,6 +252,7 @@ namespace Pantheon.Core.Combat
             Sundered = 0;
             Volley = 0;
             Storm = 0;
+            Scale = 0;
             ShotsPlayedThisTurn = 0;
             ShotCostReductionThisTurn = 0;
         }
