@@ -175,8 +175,13 @@ namespace Pantheon.Core.Combat
 
         public int ConsumeStorm()
         {
-            var consumed = Storm;
-            Storm = 0;
+            return ConsumeStorm(Storm);
+        }
+
+        public int ConsumeStorm(int maxAmount)
+        {
+            var consumed = System.Math.Min(Storm, maxAmount);
+            Storm -= consumed;
             return consumed;
         }
 
@@ -202,6 +207,14 @@ namespace Pantheon.Core.Combat
         public void Heal(int amount)
         {
             CurrentHP = System.Math.Min(MaxHP, CurrentHP + amount);
+        }
+
+        // Direct HP loss, bypassing Block entirely - for self-inflicted costs
+        // (e.g. Bloodrage's "Lose 3 HP"), distinct from TakeDamage which is for
+        // incoming enemy damage and always applies Block first.
+        public void LoseHP(int amount)
+        {
+            CurrentHP = System.Math.Max(0, CurrentHP - amount);
         }
 
         // Resets all combat-scoped state for a fresh encounter; HP persists across

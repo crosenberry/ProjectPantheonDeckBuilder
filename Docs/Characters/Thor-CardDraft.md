@@ -32,11 +32,11 @@ Identity: cheap Storm generation paired with small, repeatable consumption every
 
 | Name | Type | Cost | Effect |
 |---|---|---|---|
-| Charged Strike | Attack, StormGenerating (Common) | 1 | Deal 6 damage. Gain 1 Storm. |
+| Spark | Attack (Common) | 1 | Deal 5 damage. Consume up to 2 Storm: deal 3 additional damage per point consumed. |
 | Discharge Bolt | Attack (Common) | 1 | Consume 1 Storm: deal 9 damage. If you have no Storm, deal 4 damage instead. |
 | Static Grip | Skill, StormGenerating (Common) | 1 | Gain 1 Storm. Draw 1 card. |
-| Chain Bolt | Attack (Uncommon) | 1 | Deal 6 damage. Consume 1 Storm: deal 6 damage to a different random enemy. |
-| Full Discharge | Attack, hits ALL enemies (Rare) | 2 | Consume all Storm. Deal 6 damage per point consumed, split randomly among all enemies. |
+| Galvanize | Skill, StormGenerating (Uncommon) | 1 | Gain 3 Storm. Draw 1 card. |
+| Stormbrand | Attack (Rare) | 1 | Deal 3 damage. Consume all Storm: deal 5 damage per point consumed instead of the base damage. |
 
 ## Path C — Unrelenting (Storm-light, HP-for-power berserker)
 
@@ -53,5 +53,6 @@ Identity: mostly ignores Storm, trades HP directly for Strength and raw hit size
 ## Curation Notes
 
 - **Fixes the near-duplicate flagged in Thor-FullCardDraft.md**: Norn's Insight and Ravens' Sight were identical "look at top 3, discard any" Skills at Common and Uncommon respectively. Neither made this curated slice (both are Flex glue cards, not archetype-defining), but the underlying duplicate is fixed at the source — see the amendment in Thor-FullCardDraft.md.
-- **Effect-shape reuse vs. new work**: several picks (Shield Wall, Titan's Bulwark, Charged Strike, Feral Roar, Headlong Charge, Reckless Swing, Bloodrage, Ymir's Wrath) map directly onto composition of existing `CardEffect` types (damage, block, status, self-damage) or trivial variants of them. A handful (Deflect's Storm-threshold Block, Thunderous Retort's read-current-Block, Discharge Bolt's consume-with-fallback, Chain Bolt's random-enemy targeting, Thunderclap/Full Discharge's consume-all-to-all-enemies) need new effect classes — same shape of work Artemis's slice needed for `ConditionalDoubleHitDamageEffect`/`ConsumeVolleyDamageEffect`/etc. Exact class design is implementation-level, worked out via TDD in `feature/thor-card-slice`, not pre-decided here.
-- **Why these 5 per path over other candidates**: each path's 5 cards span its full cost curve (0-3) and include at least one Common, one Rare, and one card that reads as a clear archetype "finisher" (Thunderclap, Full Discharge, Ymir's Wrath) — mirrors Artemis's path shape (Rain of Arrows / Full Draw / Apex Predator each read as their path's capstone).
+- **Effect-shape reuse vs. new work**: several picks (Shield Wall, Titan's Bulwark, Charged Strike, Static Grip, Galvanize, Feral Roar, Headlong Charge, Reckless Swing, Bloodrage, Ymir's Wrath) map directly onto composition of existing `CardEffect` types (damage, block, status, draw) or trivial variants of them. A handful (Deflect's Storm-threshold Block, Thunderous Retort's read-current-Block, Discharge Bolt's consume-with-fallback, Spark's consume-up-to-a-cap, Stormbrand's consume-all-or-base, Thunderclap's consume-all-to-all-enemies, plus a shared self-damage effect for Bloodrage/Reckless Swing/Ymir's Wrath) need new effect classes — same shape of work Artemis's slice needed for `ConditionalDoubleHitDamageEffect`/`ConsumeVolleyDamageEffect`/etc. Exact class design is implementation-level, worked out via TDD in `feature/thor-card-slice`, not pre-decided here.
+- **Chain path swap, found during implementation**: the original picks (Chain Bolt, Full Discharge) both needed "target a random enemy" / "split damage randomly," which `CardEffectContext` has no random-number source for at all — a real architecture gap, not just missing content. Rather than extend `CardEffectContext` mid-slice for two cards, swapped to **Galvanize** and **Stormbrand**, both from the same full draft, neither needing randomness. Same "defer, don't force it" reasoning as holding back Aegis of the Hunt and Chain Bolt/Full Discharge's own trigger-shaped cousins in the M5 design session.
+- **Why these 5 per path**: each path's 5 cards span its full cost curve (0-3) and include at least one Common, one Rare, and one card that reads as a clear archetype "finisher" (Thunderclap, Stormbrand, Ymir's Wrath) — mirrors Artemis's path shape (Rain of Arrows / Full Draw / Apex Predator each read as their path's capstone).
