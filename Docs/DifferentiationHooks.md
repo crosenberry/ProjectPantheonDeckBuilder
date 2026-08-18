@@ -53,7 +53,9 @@ Flagging this shape separately since it does a different job than Shape 3 (the r
 
 **Suggested first prototype target**: Artemis + Thor, since both already have full or near-full card pools drafted ([Artemis](Characters/Artemis-CardDraft.md), [Thor](Characters/Thor-FullCardDraft.md)) — cheapest pair to sketch a concrete fusion example against without new foundational work.
 
-> Prototyped — see [Docs/Syncretism/Artemis-Thor-Prototype.md](Syncretism/Artemis-Thor-Prototype.md). Verdict: the core hypothesis holds — hybrid Volley+Storm decisions genuinely differ from either mono-Blessing deck. Open decision: which of the 3 mechanical shapes (relic fusion, card evolution, resource-interaction cards) to commit to, since only Shape 3 (cards) got a real pressure test.
+> Prototyped — see [Docs/Syncretism/Artemis-Thor-Prototype.md](Syncretism/Artemis-Thor-Prototype.md). Verdict: the core hypothesis holds — hybrid Volley+Storm decisions genuinely differ from either mono-Blessing deck.
+>
+> **Committed for M5** ([ImplementationRoadmap.md](ImplementationRoadmap.md)): Shape 3 (resource-interaction cards) only — it's the one shape that actually got pressure-tested. Shapes 1 (relic fusion) and 2 (card evolution) stay untested ideas for a later pass rather than shipping alongside an unproven mechanic. M5 also skips the Rift-triggered Major Enhancement unlock this doc proposes above — that needs real Major Enhancement delivery, which doesn't exist in code yet (M4 deferred it). First implementation ships the 4 resource-interaction cards unlock-free (Aegis of the Hunt held back too — its "whenever you play/gain X" triggers need trigger-event types the current system doesn't have yet); the real unlock flow is a later pass once Major Enhancement content exists for real.
 
 ### Scaling note: designing for more than 4 Blessings later
 

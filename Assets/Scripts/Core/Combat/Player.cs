@@ -21,6 +21,7 @@ namespace Pantheon.Core.Combat
         public int Drained { get; private set; }
         public int Sundered { get; private set; }
         public int Volley { get; private set; }
+        public int Storm { get; private set; }
         public int ShotsPlayedThisTurn { get; private set; }
         public int ShotCostReductionThisTurn { get; private set; }
         public IReadOnlyList<Card> DrawPile => _drawPile;
@@ -167,6 +168,18 @@ namespace Pantheon.Core.Combat
             return consumed;
         }
 
+        public void GainStorm(int amount)
+        {
+            Storm += amount;
+        }
+
+        public int ConsumeStorm()
+        {
+            var consumed = Storm;
+            Storm = 0;
+            return consumed;
+        }
+
         public void RecordShotPlayed()
         {
             ShotsPlayedThisTurn += 1;
@@ -211,6 +224,7 @@ namespace Pantheon.Core.Combat
             Drained = 0;
             Sundered = 0;
             Volley = 0;
+            Storm = 0;
             ShotsPlayedThisTurn = 0;
             ShotCostReductionThisTurn = 0;
         }
