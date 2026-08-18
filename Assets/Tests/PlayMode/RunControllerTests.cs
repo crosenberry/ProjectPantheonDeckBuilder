@@ -112,6 +112,22 @@ namespace Pantheon.PlayTests
         }
 
         [UnityTest]
+        public IEnumerator SelectBlessing_Anubis_UsesAnubisStarterDeckAndEgyptianEnemies()
+        {
+            var controller = CreateController(out var go, out var combatRunner);
+            yield return null;
+            controller.SelectBlessing(SelectedBlessing.Anubis);
+
+            controller.EnterNode(0);
+            yield return null;
+
+            Assert.That(combatRunner.Encounter.Player.Hand.Any(c => c.Name == "Jackal's Bite"), Is.True);
+            Assert.That(combatRunner.Encounter.Enemies[0].MaxHP, Is.EqualTo(40));
+
+            Object.Destroy(go);
+        }
+
+        [UnityTest]
         public IEnumerator EnterNode_CombatNode_BeginsEncounterAndSetsInCombat()
         {
             var controller = CreateController(out var go, out var combatRunner);

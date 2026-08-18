@@ -4,9 +4,11 @@ using UnityEngine;
 using Pantheon.Core;
 using Pantheon.Core.Blessings.Artemis;
 using Pantheon.Core.Blessings.Thor;
+using Pantheon.Core.Blessings.Anubis;
 using Pantheon.Core.Combat;
 using Pantheon.Core.Enemies.Greek;
 using Pantheon.Core.Enemies.Norse;
+using Pantheon.Core.Enemies.Egyptian;
 using Pantheon.Core.Meta;
 using Pantheon.Core.Meta.Greek;
 using Pantheon.Core.Run;
@@ -52,7 +54,7 @@ namespace Pantheon.Unity
         {
             _selectedBlessing = blessing;
             Player = new Player(startingEnergy: 3, startingHP: 70, _random);
-            _deck = (blessing == SelectedBlessing.Thor ? ThorCards.StarterDeck() : ArtemisCards.StarterDeck()).ToList();
+            _deck = BuildStarterDeck(blessing).ToList();
             BlessingSelected = true;
             // stageCount: 2 to prove Run.AdvanceToNextStage's chaining, not a
             // tuned run length - both stages reuse the same sample layout until
@@ -134,6 +136,19 @@ namespace Pantheon.Unity
             TogglePanels();
         }
 
+        private static IEnumerable<Card> BuildStarterDeck(SelectedBlessing blessing)
+        {
+            switch (blessing)
+            {
+                case SelectedBlessing.Thor:
+                    return ThorCards.StarterDeck();
+                case SelectedBlessing.Anubis:
+                    return AnubisCards.StarterDeck();
+                default:
+                    return ArtemisCards.StarterDeck();
+            }
+        }
+
         private IReadOnlyList<Enemy> BuildEnemies(int nodeIndex)
         {
             var node = CurrentRun.CurrentStage.Nodes[nodeIndex];
@@ -153,6 +168,20 @@ namespace Pantheon.Unity
                 return nodeIndex % 2 == 0
                     ? new[] { NorseEnemies.DraugrReaver(_random) }
                     : new[] { NorseEnemies.SeidrHexer(_random) };
+            }
+
+            if (_selectedBlessing == SelectedBlessing.Anubis)
+            {
+                if (node.Type == NodeType.Boss)
+                {
+                    return new[] { EgyptianEnemies.UshabtiSentinel(_random), EgyptianEnemies.SetsCultist(_random) }
+                        .Concat(EgyptianEnemies.ScarabSwarmPack(count: 2, _random))
+                        .ToList();
+                }
+
+                return nodeIndex % 2 == 0
+                    ? new[] { EgyptianEnemies.UshabtiSentinel(_random) }
+                    : new[] { EgyptianEnemies.SetsCultist(_random) };
             }
 
             if (node.Type == NodeType.Boss)
