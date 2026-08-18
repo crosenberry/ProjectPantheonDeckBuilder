@@ -453,6 +453,72 @@ namespace Pantheon.Core.Tests.Combat
         }
 
         [Test]
+        public void ConsumeStormWithMaxAmount_AvailableExceedsMax_ConsumesOnlyMax()
+        {
+            var player = new Player(startingEnergy: 3);
+            player.GainStorm(5);
+
+            var consumed = player.ConsumeStorm(2);
+
+            Assert.That(consumed, Is.EqualTo(2));
+            Assert.That(player.Storm, Is.EqualTo(3));
+        }
+
+        [Test]
+        public void ConsumeStormWithMaxAmount_AvailableBelowMax_ConsumesAllAvailable()
+        {
+            var player = new Player(startingEnergy: 3);
+            player.GainStorm(1);
+
+            var consumed = player.ConsumeStorm(2);
+
+            Assert.That(consumed, Is.EqualTo(1));
+            Assert.That(player.Storm, Is.EqualTo(0));
+        }
+
+        [Test]
+        public void ConsumeStormWithMaxAmount_NoStorm_ReturnsZero()
+        {
+            var player = new Player(startingEnergy: 3);
+
+            var consumed = player.ConsumeStorm(2);
+
+            Assert.That(consumed, Is.EqualTo(0));
+        }
+
+        [Test]
+        public void LoseHP_ReducesCurrentHPDirectly()
+        {
+            var player = new Player(startingEnergy: 3, startingHP: 70, new SystemRandom());
+
+            player.LoseHP(5);
+
+            Assert.That(player.CurrentHP, Is.EqualTo(65));
+        }
+
+        [Test]
+        public void LoseHP_IgnoresBlock()
+        {
+            var player = new Player(startingEnergy: 3, startingHP: 70, new SystemRandom());
+            player.GainBlock(10);
+
+            player.LoseHP(5);
+
+            Assert.That(player.CurrentHP, Is.EqualTo(65));
+            Assert.That(player.CurrentBlock, Is.EqualTo(10));
+        }
+
+        [Test]
+        public void LoseHP_AmountExceedsCurrentHP_ClampsAtZero()
+        {
+            var player = new Player(startingEnergy: 3, startingHP: 10, new SystemRandom());
+
+            player.LoseHP(999);
+
+            Assert.That(player.CurrentHP, Is.EqualTo(0));
+        }
+
+        [Test]
         public void Heal_BelowMaxHP_IncreasesCurrentHP()
         {
             var player = new Player(startingEnergy: 3, startingHP: 70, new SystemRandom());
