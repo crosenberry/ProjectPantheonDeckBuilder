@@ -25,6 +25,8 @@ namespace Pantheon.PlayTests
             // GreekStages.SampleStage() has 4 nodes; leave the pool empty so it's
             // always insufficient regardless of future content changes.
             mapView.NodeButtons = new List<Button>();
+            yield return null;
+            controller.SelectBlessing(SelectedBlessing.Artemis);
 
             LogAssert.Expect(LogType.Warning, new Regex("NodeButtons"));
             yield return null;

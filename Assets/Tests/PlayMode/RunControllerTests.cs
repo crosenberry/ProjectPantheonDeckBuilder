@@ -65,11 +65,27 @@ namespace Pantheon.PlayTests
         }
 
         [UnityTest]
-        public IEnumerator Start_CreatesRunAndPlayerWithInitialState()
+        public IEnumerator Start_BeforeSelection_AwaitsBlessingChoice()
         {
             var controller = CreateController(out var go, out _);
             yield return null;
 
+            Assert.That(controller.BlessingSelected, Is.False);
+            Assert.That(controller.CurrentRun, Is.Null);
+            Assert.That(controller.Player, Is.Null);
+
+            Object.Destroy(go);
+        }
+
+        [UnityTest]
+        public IEnumerator SelectBlessing_CreatesRunAndPlayerWithInitialState()
+        {
+            var controller = CreateController(out var go, out _);
+            yield return null;
+
+            controller.SelectBlessing(SelectedBlessing.Artemis);
+
+            Assert.That(controller.BlessingSelected, Is.True);
             Assert.That(controller.CurrentRun, Is.Not.Null);
             Assert.That(controller.CurrentRun.Outcome, Is.EqualTo(RunOutcome.InProgress));
             Assert.That(controller.Player, Is.Not.Null);
@@ -80,10 +96,27 @@ namespace Pantheon.PlayTests
         }
 
         [UnityTest]
+        public IEnumerator SelectBlessing_Thor_UsesThorStarterDeckAndNorseEnemies()
+        {
+            var controller = CreateController(out var go, out var combatRunner);
+            yield return null;
+            controller.SelectBlessing(SelectedBlessing.Thor);
+
+            controller.EnterNode(0);
+            yield return null;
+
+            Assert.That(combatRunner.Encounter.Player.Hand.Any(c => c.Name == "Hammer Strike"), Is.True);
+            Assert.That(combatRunner.Encounter.Enemies[0].MaxHP, Is.EqualTo(44));
+
+            Object.Destroy(go);
+        }
+
+        [UnityTest]
         public IEnumerator EnterNode_CombatNode_BeginsEncounterAndSetsInCombat()
         {
             var controller = CreateController(out var go, out var combatRunner);
             yield return null;
+            controller.SelectBlessing(SelectedBlessing.Artemis);
 
             controller.EnterNode(0);
             yield return null;
@@ -100,6 +133,7 @@ namespace Pantheon.PlayTests
         {
             var controller = CreateController(out var go, out _);
             yield return null;
+            controller.SelectBlessing(SelectedBlessing.Artemis);
             controller.EnterNode(0);
             yield return null;
 
@@ -117,6 +151,7 @@ namespace Pantheon.PlayTests
         {
             var controller = CreateController(out var go, out _);
             yield return null;
+            controller.SelectBlessing(SelectedBlessing.Artemis);
             controller.EnterNode(0);
             yield return null;
             yield return WinCombat(controller);
@@ -136,6 +171,7 @@ namespace Pantheon.PlayTests
         {
             var controller = CreateController(out var go, out _);
             yield return null;
+            controller.SelectBlessing(SelectedBlessing.Artemis);
 
             yield return WalkStageToBoss(controller);
 
@@ -151,6 +187,7 @@ namespace Pantheon.PlayTests
         {
             var controller = CreateController(out var go, out _);
             yield return null;
+            controller.SelectBlessing(SelectedBlessing.Artemis);
             yield return WalkStageToBoss(controller);
             var chosen = controller.OfferedBossRelics[0];
 
@@ -170,6 +207,7 @@ namespace Pantheon.PlayTests
         {
             var controller = CreateController(out var go, out _);
             yield return null;
+            controller.SelectBlessing(SelectedBlessing.Artemis);
             yield return WalkStageToBoss(controller);
             controller.ClaimBossReward(controller.OfferedBossRelics[0]);
             yield return null;
@@ -189,6 +227,7 @@ namespace Pantheon.PlayTests
         {
             var controller = CreateController(out var go, out _);
             yield return null;
+            controller.SelectBlessing(SelectedBlessing.Artemis);
             controller.EnterNode(0);
             yield return null;
 
@@ -203,20 +242,28 @@ namespace Pantheon.PlayTests
         }
 
         [UnityTest]
-        public IEnumerator TogglePanels_ReflectsControllerStateAcrossMapCombatAndBossReward()
+        public IEnumerator TogglePanels_ReflectsControllerStateAcrossSelectionMapCombatAndBossReward()
         {
             var go = new GameObject();
             var combatRunner = go.AddComponent<CombatEncounterRunner>();
             var controller = go.AddComponent<RunController>();
             controller.CombatRunner = combatRunner;
+            var blessingSelectPanel = new GameObject("BlessingSelectPanel");
             var mapPanel = new GameObject("MapPanel");
             var bossRewardPanel = new GameObject("BossRewardPanel");
             var combatPanel = new GameObject("CombatPanel");
+            controller.BlessingSelectPanel = blessingSelectPanel;
             controller.MapPanel = mapPanel;
             controller.BossRewardPanel = bossRewardPanel;
             controller.CombatPanels = new[] { combatPanel };
             yield return null;
 
+            Assert.That(blessingSelectPanel.activeSelf, Is.True, "Blessing select should be visible before any choice is made.");
+            Assert.That(mapPanel.activeSelf, Is.False, "Map should stay hidden until a Blessing is selected.");
+
+            controller.SelectBlessing(SelectedBlessing.Artemis);
+
+            Assert.That(blessingSelectPanel.activeSelf, Is.False, "Blessing select should hide once a choice is made.");
             Assert.That(mapPanel.activeSelf, Is.True, "Map should be visible at run start.");
             Assert.That(combatPanel.activeSelf, Is.False);
             Assert.That(bossRewardPanel.activeSelf, Is.False);
@@ -244,6 +291,7 @@ namespace Pantheon.PlayTests
             Assert.That(mapPanel.activeSelf, Is.False, "Map should hide while awaiting the boss reward.");
 
             Object.Destroy(go);
+            Object.Destroy(blessingSelectPanel);
             Object.Destroy(mapPanel);
             Object.Destroy(bossRewardPanel);
             Object.Destroy(combatPanel);
