@@ -3,8 +3,10 @@ using System.Linq;
 using UnityEngine;
 using Pantheon.Core;
 using Pantheon.Core.Blessings.Artemis;
+using Pantheon.Core.Blessings.Thor;
 using Pantheon.Core.Combat;
 using Pantheon.Core.Enemies.Greek;
+using Pantheon.Core.Enemies.Norse;
 using Pantheon.Core.Meta;
 using Pantheon.Core.Meta.Greek;
 using Pantheon.Core.Run;
@@ -18,12 +20,14 @@ namespace Pantheon.Unity
         private const int BossExclusiveChancePercent = 10;
 
         public CombatEncounterRunner CombatRunner;
+        public GameObject BlessingSelectPanel;
         public GameObject MapPanel;
         public GameObject[] CombatPanels;
         public GameObject BossRewardPanel;
 
         public Core.Run.Run CurrentRun { get; private set; }
         public Player Player { get; private set; }
+        public bool BlessingSelected { get; private set; }
         public bool InCombat { get; private set; }
         public bool AwaitingBossReward { get; private set; }
         public IReadOnlyList<Relic> OfferedBossRelics { get; private set; }
@@ -31,12 +35,25 @@ namespace Pantheon.Unity
 
         private IRandom _random;
         private List<Card> _deck;
+        private SelectedBlessing _selectedBlessing;
 
         private void Start()
         {
             _random = new SystemRandom();
+            TogglePanels();
+        }
+
+        // No selection screen existed before Thor - Artemis was simply the only
+        // choice - so this is the first point a live game ever needs to pick
+        // between Blessings. Relics stay tied to stage mythology regardless of
+        // which Blessing is selected (GreekStages/GreekRelics reused as-is for
+        // both) - that's the M3 relic design rule, not an oversight.
+        public void SelectBlessing(SelectedBlessing blessing)
+        {
+            _selectedBlessing = blessing;
             Player = new Player(startingEnergy: 3, startingHP: 70, _random);
-            _deck = ArtemisCards.StarterDeck().ToList();
+            _deck = (blessing == SelectedBlessing.Thor ? ThorCards.StarterDeck() : ArtemisCards.StarterDeck()).ToList();
+            BlessingSelected = true;
             // stageCount: 2 to prove Run.AdvanceToNextStage's chaining, not a
             // tuned run length - both stages reuse the same sample layout until
             // a second mythology's content exists to chain to via a real Rift
@@ -121,9 +138,23 @@ namespace Pantheon.Unity
         {
             var node = CurrentRun.CurrentStage.Nodes[nodeIndex];
 
-            // Placeholder boss: the full minimal Greek roster at once, until real
+            // Placeholder bosses: the full minimal roster at once, until real
             // stage bosses are designed (deferred with the rest of full enemy/boss
             // design, GDD section 11).
+            if (_selectedBlessing == SelectedBlessing.Thor)
+            {
+                if (node.Type == NodeType.Boss)
+                {
+                    return new[] { NorseEnemies.DraugrReaver(_random), NorseEnemies.SeidrHexer(_random) }
+                        .Concat(NorseEnemies.WolfPack(count: 2, _random))
+                        .ToList();
+                }
+
+                return nodeIndex % 2 == 0
+                    ? new[] { NorseEnemies.DraugrReaver(_random) }
+                    : new[] { NorseEnemies.SeidrHexer(_random) };
+            }
+
             if (node.Type == NodeType.Boss)
             {
                 return new[] { GreekEnemies.HopliteSkirmisher(_random), GreekEnemies.HarpyScreecher(_random) }
@@ -138,9 +169,14 @@ namespace Pantheon.Unity
 
         private void TogglePanels()
         {
+            if (BlessingSelectPanel != null)
+            {
+                BlessingSelectPanel.SetActive(!BlessingSelected);
+            }
+
             if (MapPanel != null)
             {
-                MapPanel.SetActive(!InCombat && !AwaitingBossReward);
+                MapPanel.SetActive(BlessingSelected && !InCombat && !AwaitingBossReward);
             }
 
             if (CombatPanels != null)
