@@ -4,6 +4,8 @@ namespace Pantheon.Core.Combat
     {
         Shot,
         Exhaust,
-        StormGenerating
+        StormGenerating,
+        Order,
+        Chaos
     }
 }

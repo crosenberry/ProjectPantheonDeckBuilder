@@ -487,6 +487,80 @@ namespace Pantheon.Core.Tests.Combat
         }
 
         [Test]
+        public void AdjustScale_PositiveAmount_IncreasesScale()
+        {
+            var player = new Player(startingEnergy: 3);
+
+            player.AdjustScale(2);
+
+            Assert.That(player.Scale, Is.EqualTo(2));
+        }
+
+        [Test]
+        public void AdjustScale_NegativeAmount_DecreasesScale()
+        {
+            var player = new Player(startingEnergy: 3);
+
+            player.AdjustScale(-2);
+
+            Assert.That(player.Scale, Is.EqualTo(-2));
+        }
+
+        [Test]
+        public void AdjustScale_ExceedsUpperBound_ClampsAtFive()
+        {
+            var player = new Player(startingEnergy: 3);
+            player.AdjustScale(4);
+
+            player.AdjustScale(4);
+
+            Assert.That(player.Scale, Is.EqualTo(5));
+        }
+
+        [Test]
+        public void AdjustScale_ExceedsLowerBound_ClampsAtNegativeFive()
+        {
+            var player = new Player(startingEnergy: 3);
+            player.AdjustScale(-4);
+
+            player.AdjustScale(-4);
+
+            Assert.That(player.Scale, Is.EqualTo(-5));
+        }
+
+        [Test]
+        public void SetScale_SetsScaleToGivenValue()
+        {
+            var player = new Player(startingEnergy: 3);
+            player.AdjustScale(3);
+
+            player.SetScale(0);
+
+            Assert.That(player.Scale, Is.EqualTo(0));
+        }
+
+        [Test]
+        public void SetScale_ExceedsUpperBound_ClampsAtFive()
+        {
+            var player = new Player(startingEnergy: 3);
+
+            player.SetScale(9);
+
+            Assert.That(player.Scale, Is.EqualTo(5));
+        }
+
+        [Test]
+        public void StartTurn_DoesNotResetScale()
+        {
+            var player = new Player(startingEnergy: 3);
+            player.AdjustScale(3);
+
+            player.StartTurn(cardsToDraw: 0);
+
+            Assert.That(player.Scale, Is.EqualTo(3));
+        }
+
+        [Test]
         public void LoseHP_ReducesCurrentHPDirectly()
         {
             var player = new Player(startingEnergy: 3, startingHP: 70, new SystemRandom());
@@ -581,6 +655,7 @@ namespace Pantheon.Core.Tests.Combat
             player.GainBlock(5);
             player.GainVolley(3);
             player.GainStorm(3);
+            player.AdjustScale(3);
 
             player.PrepareForCombat(Enumerable.Empty<Card>());
 
@@ -591,6 +666,7 @@ namespace Pantheon.Core.Tests.Combat
             Assert.That(player.CurrentBlock, Is.EqualTo(0));
             Assert.That(player.Volley, Is.EqualTo(0));
             Assert.That(player.Storm, Is.EqualTo(0));
+            Assert.That(player.Scale, Is.EqualTo(0));
         }
 
         [Test]
