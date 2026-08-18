@@ -379,6 +379,19 @@ namespace Pantheon.Core.Tests.Combat
         }
 
         [Test]
+        public void ExecuteEnemyIntent_DebuffIntentAppliesSundered_AppliesStatusToPlayerWithoutDamage()
+        {
+            var player = new Player(startingEnergy: 3, startingHP: 70, new SystemRandom());
+            var moves = new[] { new EnemyMove("Hex", IntentType.Debuff, value: 2, status: StatusType.Sundered) };
+            var enemy = new Enemy(maxHP: 28, moves, new FakeRandom());
+
+            CombatResolver.ExecuteEnemyIntent(enemy, player);
+
+            Assert.That(player.Sundered, Is.EqualTo(2));
+            Assert.That(player.CurrentHP, Is.EqualTo(70));
+        }
+
+        [Test]
         public void ExecuteEnemyIntent_NoIntent_DoesNothing()
         {
             var player = new Player(startingEnergy: 3, startingHP: 70, new SystemRandom());

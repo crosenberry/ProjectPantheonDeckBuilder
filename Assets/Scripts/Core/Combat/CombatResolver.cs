@@ -95,6 +95,16 @@ namespace Pantheon.Core.Combat
 
         private static void ApplyStatus(ICombatant combatant, StatusType status, int amount)
         {
+            // Sundered is Player-only (it reduces Block gained from Skills, and only
+            // the Player plays cards), same reason ApplyStatusEffect special-cases it
+            // for card-sourced Sundered - ICombatant has no ApplySundered member since
+            // Enemy never needs one.
+            if (status == StatusType.Sundered && combatant is Player player)
+            {
+                player.ApplySundered(amount);
+                return;
+            }
+
             switch (status)
             {
                 case StatusType.Strength:
