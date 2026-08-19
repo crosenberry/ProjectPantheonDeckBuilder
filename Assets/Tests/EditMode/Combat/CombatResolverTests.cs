@@ -341,6 +341,36 @@ namespace Pantheon.Core.Tests.Combat
         }
 
         [Test]
+        public void PlayCard_SkillInBeastForm_SpendsOneAdditionalEnergy()
+        {
+            var player = new Player(startingEnergy: 3);
+            player.ChangeForm(Form.Beast);
+            var enemy = new Enemy(maxHP: 42);
+            var cloudStep = Card.Skill("Cloud Step", energyCost: 1, block: 5);
+            player.AddToDrawPile(new[] { cloudStep });
+            player.StartTurn(cardsToDraw: 1);
+
+            CombatResolver.PlayCard(player, cloudStep, enemy);
+
+            Assert.That(player.CurrentEnergy, Is.EqualTo(1));
+        }
+
+        [Test]
+        public void PlayCard_AttackInBeastForm_DoesNotSpendAdditionalEnergy()
+        {
+            var player = new Player(startingEnergy: 3);
+            player.ChangeForm(Form.Beast);
+            var enemy = new Enemy(maxHP: 42);
+            var apeFist = Card.Attack("Ape Fist", energyCost: 1, damage: 5);
+            player.AddToDrawPile(new[] { apeFist });
+            player.StartTurn(cardsToDraw: 1);
+
+            CombatResolver.PlayCard(player, apeFist, enemy);
+
+            Assert.That(player.CurrentEnergy, Is.EqualTo(2));
+        }
+
+        [Test]
         public void ExecuteEnemyIntent_AttackIntent_DealsDamageToPlayer()
         {
             var player = new Player(startingEnergy: 3, startingHP: 70, new SystemRandom());

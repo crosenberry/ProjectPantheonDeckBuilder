@@ -23,6 +23,8 @@ namespace Pantheon.Core.Combat
         public int Volley { get; private set; }
         public int Storm { get; private set; }
         public int Scale { get; private set; }
+        public Form Form { get; private set; }
+        public bool ChangedFormThisTurn { get; private set; }
         public int ShotsPlayedThisTurn { get; private set; }
         public int ShotCostReductionThisTurn { get; private set; }
         public IReadOnlyList<Card> DrawPile => _drawPile;
@@ -69,6 +71,7 @@ namespace Pantheon.Core.Combat
             CurrentEnergy = MaxEnergy;
             CurrentBlock = 0;
             Volley = 0;
+            ChangedFormThisTurn = false;
             ShotsPlayedThisTurn = 0;
             ShotCostReductionThisTurn = 0;
             Exposed = System.Math.Max(0, Exposed - 1);
@@ -199,6 +202,31 @@ namespace Pantheon.Core.Combat
             Scale = System.Math.Max(-5, System.Math.Min(5, value));
         }
 
+        // Cycles Mortal -> Beast -> Immortal -> Mortal, deterministically (GDD §3.4,
+        // M7 design session) - no player-facing choice, unlike Anubis's Scale which
+        // reads a signed magnitude instead of cycling discrete states.
+        public void ChangeForm()
+        {
+            var next = Form switch
+            {
+                Form.Mortal => Form.Beast,
+                Form.Beast => Form.Immortal,
+                _ => Form.Mortal
+            };
+
+            ChangeForm(next);
+        }
+
+        public void ChangeForm(Form targetForm)
+        {
+            if (Form != targetForm)
+            {
+                ChangedFormThisTurn = true;
+            }
+
+            Form = targetForm;
+        }
+
         public void RecordShotPlayed()
         {
             ShotsPlayedThisTurn += 1;
@@ -253,6 +281,8 @@ namespace Pantheon.Core.Combat
             Volley = 0;
             Storm = 0;
             Scale = 0;
+            Form = Form.Mortal;
+            ChangedFormThisTurn = false;
             ShotsPlayedThisTurn = 0;
             ShotCostReductionThisTurn = 0;
         }

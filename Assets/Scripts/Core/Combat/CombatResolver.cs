@@ -19,6 +19,11 @@ namespace Pantheon.Core.Combat
             var isShot = card.Tags.Contains(CardTag.Shot);
             var effectiveCost = isShot ? System.Math.Max(0, card.EnergyCost - player.ShotCostReductionThisTurn) : card.EnergyCost;
 
+            if (card.Type == CardType.Skill && player.Form == Form.Beast)
+            {
+                effectiveCost += 1;
+            }
+
             player.SpendEnergy(effectiveCost);
 
             if (card.Tags.Contains(CardTag.Exhaust))

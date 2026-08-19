@@ -82,5 +82,47 @@ namespace Pantheon.Core.Tests.Combat.Effects
 
             Assert.That(player.Sundered, Is.EqualTo(2));
         }
+
+        [Test]
+        public void Apply_StrengthSelfInImmortalForm_GrantsOneAdditionalStrength()
+        {
+            var player = new Player(startingEnergy: 3);
+            player.ChangeForm(Form.Immortal);
+            var enemy = new Enemy(maxHP: 42);
+            var context = new CardEffectContext(player, enemy);
+            var effect = new ApplyStatusEffect(StatusType.Strength, 2, EffectTarget.Self);
+
+            effect.Apply(context);
+
+            Assert.That(player.Strength, Is.EqualTo(3));
+        }
+
+        [Test]
+        public void Apply_StrengthEnemyInImmortalForm_DoesNotGrantBonus()
+        {
+            var player = new Player(startingEnergy: 3);
+            player.ChangeForm(Form.Immortal);
+            var enemy = new Enemy(maxHP: 42);
+            var context = new CardEffectContext(player, enemy);
+            var effect = new ApplyStatusEffect(StatusType.Strength, 2, EffectTarget.Enemy);
+
+            effect.Apply(context);
+
+            Assert.That(enemy.Strength, Is.EqualTo(2));
+        }
+
+        [Test]
+        public void Apply_ExposedEnemyInImmortalForm_DoesNotGrantBonus()
+        {
+            var player = new Player(startingEnergy: 3);
+            player.ChangeForm(Form.Immortal);
+            var enemy = new Enemy(maxHP: 42);
+            var context = new CardEffectContext(player, enemy);
+            var effect = new ApplyStatusEffect(StatusType.Exposed, 2, EffectTarget.Enemy);
+
+            effect.Apply(context);
+
+            Assert.That(enemy.Exposed, Is.EqualTo(2));
+        }
     }
 }

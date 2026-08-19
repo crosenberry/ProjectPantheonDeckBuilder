@@ -22,11 +22,17 @@ namespace Pantheon.Core.Combat
             }
 
             var combatant = context.Resolve(Target);
+            var amount = Amount;
+
+            if (Status == StatusType.Strength && ReferenceEquals(combatant, context.Player) && context.Player.Form == Form.Immortal)
+            {
+                amount += 1;
+            }
 
             switch (Status)
             {
                 case StatusType.Strength:
-                    combatant.GainStrength(Amount);
+                    combatant.GainStrength(amount);
                     break;
                 case StatusType.Exposed:
                     combatant.ApplyExposed(Amount);
