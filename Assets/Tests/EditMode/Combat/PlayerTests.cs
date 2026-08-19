@@ -690,5 +690,120 @@ namespace Pantheon.Core.Tests.Combat
 
             Assert.That(player.Strength, Is.EqualTo(3));
         }
+
+        [Test]
+        public void Form_DefaultsToMortal()
+        {
+            var player = new Player(startingEnergy: 3);
+
+            Assert.That(player.Form, Is.EqualTo(Form.Mortal));
+        }
+
+        [Test]
+        public void ChangeForm_CyclesMortalToBeastToImmortalToMortal()
+        {
+            var player = new Player(startingEnergy: 3);
+
+            player.ChangeForm();
+            Assert.That(player.Form, Is.EqualTo(Form.Beast));
+
+            player.ChangeForm();
+            Assert.That(player.Form, Is.EqualTo(Form.Immortal));
+
+            player.ChangeForm();
+            Assert.That(player.Form, Is.EqualTo(Form.Mortal));
+        }
+
+        [Test]
+        public void ChangeForm_Cycle_SetsChangedFormThisTurn()
+        {
+            var player = new Player(startingEnergy: 3);
+
+            player.ChangeForm();
+
+            Assert.That(player.ChangedFormThisTurn, Is.True);
+        }
+
+        [Test]
+        public void ChangeFormToSpecificForm_SetsFormDirectly()
+        {
+            var player = new Player(startingEnergy: 3);
+
+            player.ChangeForm(Form.Immortal);
+
+            Assert.That(player.Form, Is.EqualTo(Form.Immortal));
+        }
+
+        [Test]
+        public void ChangeFormToSpecificForm_DifferentFromCurrent_SetsChangedFormThisTurn()
+        {
+            var player = new Player(startingEnergy: 3);
+
+            player.ChangeForm(Form.Beast);
+
+            Assert.That(player.ChangedFormThisTurn, Is.True);
+        }
+
+        [Test]
+        public void ChangeFormToSpecificForm_SameAsCurrent_DoesNotSetChangedFormThisTurn()
+        {
+            var player = new Player(startingEnergy: 3);
+
+            player.ChangeForm(Form.Mortal);
+
+            Assert.That(player.ChangedFormThisTurn, Is.False);
+        }
+
+        [Test]
+        public void ChangedFormThisTurn_DefaultsToFalse()
+        {
+            var player = new Player(startingEnergy: 3);
+
+            Assert.That(player.ChangedFormThisTurn, Is.False);
+        }
+
+        [Test]
+        public void StartTurn_ResetsChangedFormThisTurnToFalse()
+        {
+            var player = new Player(startingEnergy: 3);
+            player.ChangeForm();
+
+            player.StartTurn(cardsToDraw: 0);
+
+            Assert.That(player.ChangedFormThisTurn, Is.False);
+        }
+
+        [Test]
+        public void StartTurn_DoesNotResetForm()
+        {
+            var player = new Player(startingEnergy: 3);
+            player.ChangeForm();
+
+            player.StartTurn(cardsToDraw: 0);
+
+            Assert.That(player.Form, Is.EqualTo(Form.Beast));
+        }
+
+        [Test]
+        public void PrepareForCombat_ResetsFormToMortal()
+        {
+            var player = new Player(startingEnergy: 3);
+            player.ChangeForm(Form.Immortal);
+
+            player.PrepareForCombat(Enumerable.Empty<Card>());
+
+            Assert.That(player.Form, Is.EqualTo(Form.Mortal));
+        }
+
+        [Test]
+        public void PrepareForCombat_ResetsChangedFormThisTurnToFalse()
+        {
+            var player = new Player(startingEnergy: 3);
+            player.ChangeForm();
+
+            player.PrepareForCombat(Enumerable.Empty<Card>());
+
+            Assert.That(player.ChangedFormThisTurn, Is.False);
+        }
     }
 }

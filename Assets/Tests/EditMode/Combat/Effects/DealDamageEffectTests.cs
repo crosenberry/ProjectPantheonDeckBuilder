@@ -59,5 +59,47 @@ namespace Pantheon.Core.Tests.Combat.Effects
 
             Assert.That(enemy.CurrentHP, Is.EqualTo(30));
         }
+
+        [Test]
+        public void Apply_PlayerInBeastForm_HitsTwice()
+        {
+            var player = new Player(startingEnergy: 3);
+            player.ChangeForm(Form.Beast);
+            var enemy = new Enemy(maxHP: 42);
+            var context = new CardEffectContext(player, enemy);
+            var effect = new DealDamageEffect(6);
+
+            effect.Apply(context);
+
+            Assert.That(enemy.CurrentHP, Is.EqualTo(30));
+        }
+
+        [Test]
+        public void Apply_PlayerInImmortalForm_ReducesDamageByThree()
+        {
+            var player = new Player(startingEnergy: 3);
+            player.ChangeForm(Form.Immortal);
+            var enemy = new Enemy(maxHP: 42);
+            var context = new CardEffectContext(player, enemy);
+            var effect = new DealDamageEffect(6);
+
+            effect.Apply(context);
+
+            Assert.That(enemy.CurrentHP, Is.EqualTo(39));
+        }
+
+        [Test]
+        public void Apply_PlayerInImmortalFormWithLowDamage_FlooredAtOne()
+        {
+            var player = new Player(startingEnergy: 3);
+            player.ChangeForm(Form.Immortal);
+            var enemy = new Enemy(maxHP: 42);
+            var context = new CardEffectContext(player, enemy);
+            var effect = new DealDamageEffect(2);
+
+            effect.Apply(context);
+
+            Assert.That(enemy.CurrentHP, Is.EqualTo(41));
+        }
     }
 }

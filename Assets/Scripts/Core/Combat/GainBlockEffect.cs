@@ -13,6 +13,11 @@ namespace Pantheon.Core.Combat
         {
             var block = Amount;
 
+            if (context.Player.Form == Form.Immortal)
+            {
+                block += 1;
+            }
+
             if (block > 0 && context.Player.Sundered > 0)
             {
                 block = (int)(block * 0.75);
