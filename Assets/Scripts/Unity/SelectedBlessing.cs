@@ -4,6 +4,7 @@ namespace Pantheon.Unity
     {
         Artemis,
         Thor,
-        Anubis
+        Anubis,
+        SunWukong
     }
 }
