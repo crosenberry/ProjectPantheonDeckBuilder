@@ -9,6 +9,7 @@ namespace Pantheon.Unity
         public Button ArtemisButton;
         public Button ThorButton;
         public Button AnubisButton;
+        public Button SunWukongButton;
 
         private void Start()
         {
@@ -25,6 +26,11 @@ namespace Pantheon.Unity
             if (AnubisButton != null)
             {
                 AnubisButton.onClick.AddListener(() => Controller.SelectBlessing(SelectedBlessing.Anubis));
+            }
+
+            if (SunWukongButton != null)
+            {
+                SunWukongButton.onClick.AddListener(() => Controller.SelectBlessing(SelectedBlessing.SunWukong));
             }
         }
     }

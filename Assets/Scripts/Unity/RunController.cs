@@ -5,10 +5,12 @@ using Pantheon.Core;
 using Pantheon.Core.Blessings.Artemis;
 using Pantheon.Core.Blessings.Thor;
 using Pantheon.Core.Blessings.Anubis;
+using Pantheon.Core.Blessings.SunWukong;
 using Pantheon.Core.Combat;
 using Pantheon.Core.Enemies.Greek;
 using Pantheon.Core.Enemies.Norse;
 using Pantheon.Core.Enemies.Egyptian;
+using Pantheon.Core.Enemies.Chinese;
 using Pantheon.Core.Meta;
 using Pantheon.Core.Meta.Greek;
 using Pantheon.Core.Run;
@@ -144,6 +146,8 @@ namespace Pantheon.Unity
                     return ThorCards.StarterDeck();
                 case SelectedBlessing.Anubis:
                     return AnubisCards.StarterDeck();
+                case SelectedBlessing.SunWukong:
+                    return SunWukongCards.StarterDeck();
                 default:
                     return ArtemisCards.StarterDeck();
             }
@@ -182,6 +186,20 @@ namespace Pantheon.Unity
                 return nodeIndex % 2 == 0
                     ? new[] { EgyptianEnemies.UshabtiSentinel(_random) }
                     : new[] { EgyptianEnemies.SetsCultist(_random) };
+            }
+
+            if (_selectedBlessing == SelectedBlessing.SunWukong)
+            {
+                if (node.Type == NodeType.Boss)
+                {
+                    return new[] { ChineseEnemies.HeavenlySoldier(_random), ChineseEnemies.NineTailedFoxSpirit(_random) }
+                        .Concat(ChineseEnemies.YakshaSwarmPack(count: 2, _random))
+                        .ToList();
+                }
+
+                return nodeIndex % 2 == 0
+                    ? new[] { ChineseEnemies.HeavenlySoldier(_random) }
+                    : new[] { ChineseEnemies.NineTailedFoxSpirit(_random) };
             }
 
             if (node.Type == NodeType.Boss)

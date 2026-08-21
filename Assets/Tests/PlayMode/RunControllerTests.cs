@@ -128,6 +128,22 @@ namespace Pantheon.PlayTests
         }
 
         [UnityTest]
+        public IEnumerator SelectBlessing_SunWukong_UsesSunWukongStarterDeckAndChineseEnemies()
+        {
+            var controller = CreateController(out var go, out var combatRunner);
+            yield return null;
+            controller.SelectBlessing(SelectedBlessing.SunWukong);
+
+            controller.EnterNode(0);
+            yield return null;
+
+            Assert.That(combatRunner.Encounter.Player.Hand.Any(c => c.Name == "Ape Fist"), Is.True);
+            Assert.That(combatRunner.Encounter.Enemies[0].MaxHP, Is.EqualTo(42));
+
+            Object.Destroy(go);
+        }
+
+        [UnityTest]
         public IEnumerator EnterNode_CombatNode_BeginsEncounterAndSetsInCombat()
         {
             var controller = CreateController(out var go, out var combatRunner);
