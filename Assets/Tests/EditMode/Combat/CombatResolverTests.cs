@@ -433,6 +433,57 @@ namespace Pantheon.Core.Tests.Combat
         }
 
         [Test]
+        public void ExecuteEnemyIntent_MoveWithStormDelta_IncreasesEnemyStorm()
+        {
+            var player = new Player(startingEnergy: 3, startingHP: 70, new SystemRandom());
+            var moves = new[] { new EnemyMove("Charge", IntentType.Buff, value: 0, stormDelta: 2, maxStorm: 5) };
+            var enemy = new Enemy(maxHP: 42, moves, new FakeRandom());
+
+            CombatResolver.ExecuteEnemyIntent(enemy, player);
+
+            Assert.That(enemy.Storm, Is.EqualTo(2));
+        }
+
+        [Test]
+        public void ExecuteEnemyIntent_MoveConsumesStorm_ResetsEnemyStormToZero()
+        {
+            var player = new Player(startingEnergy: 3, startingHP: 70, new SystemRandom());
+            var moves = new[] { new EnemyMove("Discharge", IntentType.Attack, value: 20, consumesStorm: true, minStorm: 6) };
+            var enemy = new Enemy(maxHP: 42, moves, new FakeRandom());
+            enemy.GainStorm(6);
+            enemy.ChooseNextIntent();
+
+            CombatResolver.ExecuteEnemyIntent(enemy, player);
+
+            Assert.That(enemy.Storm, Is.EqualTo(0));
+            Assert.That(player.CurrentHP, Is.EqualTo(50));
+        }
+
+        [Test]
+        public void ExecuteEnemyIntent_MoveWithScaleDelta_AdjustsEnemyScale()
+        {
+            var player = new Player(startingEnergy: 3, startingHP: 70, new SystemRandom());
+            var moves = new[] { new EnemyMove("Sway", IntentType.Attack, value: 6, scaleDelta: -2) };
+            var enemy = new Enemy(maxHP: 42, moves, new FakeRandom());
+
+            CombatResolver.ExecuteEnemyIntent(enemy, player);
+
+            Assert.That(enemy.Scale, Is.EqualTo(-2));
+        }
+
+        [Test]
+        public void ExecuteEnemyIntent_MoveWithFormTarget_ChangesEnemyForm()
+        {
+            var player = new Player(startingEnergy: 3, startingHP: 70, new SystemRandom());
+            var moves = new[] { new EnemyMove("Guard", IntentType.Block, value: 8, formTarget: Form.Beast) };
+            var enemy = new Enemy(maxHP: 42, moves, new FakeRandom());
+
+            CombatResolver.ExecuteEnemyIntent(enemy, player);
+
+            Assert.That(enemy.Form, Is.EqualTo(Form.Beast));
+        }
+
+        [Test]
         public void ExecuteEnemyIntent_AfterExecuting_ChoosesNewIntent()
         {
             var player = new Player(startingEnergy: 3, startingHP: 70, new SystemRandom());

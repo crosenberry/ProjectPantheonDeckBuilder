@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Pantheon.Core.Combat
 {
@@ -13,6 +14,9 @@ namespace Pantheon.Core.Combat
         public int Exposed { get; private set; }
         public int Drained { get; private set; }
         public int CurrentBlock { get; private set; }
+        public int Storm { get; private set; }
+        public int Scale { get; private set; }
+        public Form Form { get; private set; }
         public IReadOnlyList<EnemyMove> Moves { get; }
         public EnemyMove CurrentIntent { get; private set; }
 
@@ -62,16 +66,40 @@ namespace Pantheon.Core.Combat
             Drained += amount;
         }
 
+        public void GainStorm(int amount)
+        {
+            Storm += amount;
+        }
+
+        public int ConsumeStorm()
+        {
+            var consumed = Storm;
+            Storm = 0;
+            return consumed;
+        }
+
+        public void AdjustScale(int amount)
+        {
+            Scale = System.Math.Max(-5, System.Math.Min(5, Scale + amount));
+        }
+
+        public void ChangeForm(Form targetForm)
+        {
+            Form = targetForm;
+        }
+
         public void ChooseNextIntent()
         {
-            if (Moves.Count == 0)
+            var eligibleMoves = Moves.Where(IsEligible).ToList();
+
+            if (eligibleMoves.Count == 0)
             {
                 CurrentIntent = null;
                 return;
             }
 
             var totalWeight = 0;
-            foreach (var move in Moves)
+            foreach (var move in eligibleMoves)
             {
                 totalWeight += move.Weight;
             }
@@ -79,7 +107,7 @@ namespace Pantheon.Core.Combat
             var roll = _random.Next(totalWeight);
             var cumulative = 0;
 
-            foreach (var move in Moves)
+            foreach (var move in eligibleMoves)
             {
                 cumulative += move.Weight;
                 if (roll < cumulative)
@@ -88,6 +116,16 @@ namespace Pantheon.Core.Combat
                     return;
                 }
             }
+        }
+
+        private bool IsEligible(EnemyMove move)
+        {
+            if (move.MinStorm.HasValue && Storm < move.MinStorm.Value) { return false; }
+            if (move.MaxStorm.HasValue && Storm > move.MaxStorm.Value) { return false; }
+            if (move.MinScale.HasValue && Scale < move.MinScale.Value) { return false; }
+            if (move.MaxScale.HasValue && Scale > move.MaxScale.Value) { return false; }
+            if (move.RequiredForm.HasValue && Form != move.RequiredForm.Value) { return false; }
+            return true;
         }
 
         public void StartTurn()

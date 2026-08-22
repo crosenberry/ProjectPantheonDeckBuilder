@@ -33,7 +33,7 @@ Artemis goes all the way through combat → relics → enhancements → passive 
 | **M5** | Thor: Storm resource, his card slice, Norse enemies, his passive tree, Syncretism made real | `feature/storm-resource`, `feature/thor-card-slice`, `feature/norse-enemies`, `feature/thor-passive-tree`, `feature/syncretism` | Second Blessing playable + a working cross-mythology fusion | **`v0.3`** |
 | **M6** | Anubis: Scale resource, his card slice, Egyptian enemies, his passive tree | `feature/scale-resource`, `feature/anubis-card-slice`, `feature/egyptian-enemies`, `feature/anubis-passive-tree` | Third Blessing playable | **`v0.4`** |
 | **M7** | Sun Wukong (Form) | `feature/form-resource`, `feature/wukong-card-slice`, `feature/chinese-enemies`, `feature/wukong-passive-tree` | All 4 Blessings playable | **`v0.5`** |
-| **M8** | Deferred differentiation work: Core Combat Vocabulary's *mechanical* redesign (if playtesting shows it's needed beyond the M1 naming pass) and Hook 2 (enemies using resource systems) | — | — | — |
+| **M8** | Hook 2 first pass: 4 new enemies (1/mythology) each managing its own Blessing-shaped resource (Storm/Storm-flavored/Scale/Form). Vocabulary redesign and full boss/roster design stay deferred past this pass | `feature/enemy-resource-mechanics`, `feature/hook2-enemies` | 4 new enemies live, verified in Play mode | **`v0.6`** |
 | **M9** | Co-op | — | — | — |
 
 ## Design session log
@@ -210,3 +210,22 @@ Fourth and final Blessing, same shape as M5/M6's sessions: [SunWukong-FullCardDr
 2. `feature/wukong-card-slice` — the 25-card curated slice.
 3. `feature/chinese-enemies` — the 3 new enemies from `MinimalSampleSet-Chinese.md`. Direct mirror of `feature/egyptian-enemies`.
 4. `feature/wukong-passive-tree` — `SunWukongPassiveTree.Create()` from the already-fully-specified `SunWukong-PassiveTree.md`. Direct mirror of `feature/anubis-passive-tree`.
+
+### M8 — Hook 2 first pass design session (complete)
+
+Unlike M2-M7, this milestone had no pre-existing full draft to curate from — the roadmap table only ever listed M8 as bundled deferred work ("Core Combat Vocabulary's mechanical redesign... and Hook 2"), never split into branches or a done bar. This session's real job was scoping M8 itself before any naming/content work, then doing genuine from-scratch mechanic design (the first time since M3's relic drafting that a session wasn't curating already-written material).
+
+**Real judgment call #1, confirmed via direct question to the user (recommended option taken): M8 proceeds now as forward design work**, despite the GDD/roadmap explicitly gating it on "after the minimal sample set proves out in real play" ([GDD §11](GameDesignDocument.md)). No real playtesting has happened outside this session. Consistent with how every other numeric/tuning question in this project is already deliberately deferred rather than blocking progress — this trades "some rule shapes might need revision after real playtesting" for continued forward motion, the same tradeoff the project has made everywhere else.
+
+**Real judgment call #2, confirmed via direct question to the user (recommended option taken): M8 is scoped small this pass — Hook 2 only.** Per [DifferentiationHooks.md](DifferentiationHooks.md)'s own recommended sequencing ("designing bosses/enemies first will surface what statuses are actually needed rather than retrofitting generic ones"), the Core Combat Vocabulary mechanical redesign and full boss/roster design both stay deferred past this pass — Hook 2 first, small, mirroring the existing minimal-sample-set sizing philosophy (4 new enemies, not a full roster).
+
+**Real judgment call #3, confirmed via direct question to the user (recommended option taken): the Greek Hook 2 enemy gets a Storm-shaped mechanic, not literal Volley.** Volley's defining shape (build within one turn via multiple actions, reset every turn) doesn't survive the jump to enemies, which only ever take one action per turn under the current architecture — a literal Volley-on-an-enemy could never accumulate anything before resetting. Building multi-action-per-turn enemies to preserve Volley's literal shape was considered and rejected as real new architecture beyond this pass's scope. Full reasoning, and the honest acknowledgment that 2 of the 4 new enemies now share an underlying banked-counter-then-discharge shape, live in [Hook2-ResourceEnemies.md](Enemies/Hook2-ResourceEnemies.md).
+
+**Content drafted this session:**
+1. **[Hook2-ResourceEnemies.md](Enemies/Hook2-ResourceEnemies.md)** — 4 new enemies (Wrathful Erinys/Greek, Thunderhide Jötunn/Norse, Ammit's Shade/Egyptian, Stone Guardian/Chinese), each managing its own Storm/Storm-flavored/Scale/Form. Added alongside, not replacing, the existing per-mythology minimal sets.
+
+**New naming decisions:** none beyond the 4 enemy names themselves — no new `CardTag`, `IntentType`, or `StatusType` needed. `Form` is reused literally (not a parallel enum) for the Chinese entry, matching the standing "mythology-tied resources aren't Blessing-locked" principle relics already established.
+
+**Sequencing** — 2 branches, architecture then content, mirroring M3's `feature/trigger-system`-before-content pattern (the only prior milestone that needed new shared architecture before any content could use it):
+1. `feature/enemy-resource-mechanics` — extends `Enemy` with `Storm`/`Scale`/`Form` fields mirroring `Player`'s, and `EnemyMove` with optional resource deltas (`StormDelta`, `ScaleDelta`, `FormTarget`) and eligibility gates (`MinStorm`/`MaxStorm`, `MinScale`/`MaxScale`, `RequiredForm`), plus updates `Enemy.ChooseNextIntent` to filter to only currently-eligible moves before its existing weighted-random pick, and `CombatResolver.ExecuteEnemyIntent` to apply the resource side effects after the move's primary intent action. Pure architecture, no new content yet — exact field shape worked out via TDD.
+2. `feature/hook2-enemies` — the 4 enemies from `Hook2-ResourceEnemies.md`, wired into `RunController.BuildEnemies` as an addition alongside each mythology's existing roster (exact in-run appearance rate/placement is implementation-level, not pre-decided here).
