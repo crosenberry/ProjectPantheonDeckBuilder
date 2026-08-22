@@ -82,6 +82,30 @@ namespace Pantheon.Core.Combat
                     break;
             }
 
+            // Hook 2 resource side effects (Docs/Enemies/Hook2-ResourceEnemies.md) -
+            // applied after the move's primary telegraphed action, regardless of
+            // intent type, same composition pattern player cards already use
+            // (e.g. "Deal damage. Scale -1.").
+            if (move.StormDelta != 0)
+            {
+                enemy.GainStorm(move.StormDelta);
+            }
+
+            if (move.ConsumesStorm)
+            {
+                enemy.ConsumeStorm();
+            }
+
+            if (move.ScaleDelta != 0)
+            {
+                enemy.AdjustScale(move.ScaleDelta);
+            }
+
+            if (move.FormTarget.HasValue)
+            {
+                enemy.ChangeForm(move.FormTarget.Value);
+            }
+
             enemy.ChooseNextIntent();
         }
 
