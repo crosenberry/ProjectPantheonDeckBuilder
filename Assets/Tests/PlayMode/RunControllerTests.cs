@@ -44,9 +44,10 @@ namespace Pantheon.PlayTests
         }
 
         // Walks the GreekStages sample layout (Combat -> Rest -> Combat -> Boss)
-        // from whatever the current stage's entry point is, through to the Boss
-        // node's victory.
-        private static IEnumerator WalkStageToBoss(RunController controller)
+        // from whatever the current stage's entry point is, up to and including
+        // entering the Boss node, without winning that final fight - lets a
+        // caller inspect the Boss encounter's enemy list before it's cleared.
+        private static IEnumerator WalkStageToBossNodeWithoutWinning(RunController controller)
         {
             controller.EnterNode(0);
             yield return null;
@@ -61,6 +62,14 @@ namespace Pantheon.PlayTests
 
             controller.EnterNode(3);
             yield return null;
+        }
+
+        // Walks the GreekStages sample layout (Combat -> Rest -> Combat -> Boss)
+        // from whatever the current stage's entry point is, through to the Boss
+        // node's victory.
+        private static IEnumerator WalkStageToBoss(RunController controller)
+        {
+            yield return WalkStageToBossNodeWithoutWinning(controller);
             yield return WinCombat(controller);
         }
 
@@ -139,6 +148,62 @@ namespace Pantheon.PlayTests
 
             Assert.That(combatRunner.Encounter.Player.Hand.Any(c => c.Name == "Ape Fist"), Is.True);
             Assert.That(combatRunner.Encounter.Enemies[0].MaxHP, Is.EqualTo(42));
+
+            Object.Destroy(go);
+        }
+
+        [UnityTest]
+        public IEnumerator EnterNode_ArtemisBossNode_IncludesWrathfulErinys()
+        {
+            var controller = CreateController(out var go, out var combatRunner);
+            yield return null;
+            controller.SelectBlessing(SelectedBlessing.Artemis);
+
+            yield return WalkStageToBossNodeWithoutWinning(controller);
+
+            Assert.That(combatRunner.Encounter.Enemies.Any(e => e.MaxHP == 34), Is.True);
+
+            Object.Destroy(go);
+        }
+
+        [UnityTest]
+        public IEnumerator EnterNode_ThorBossNode_IncludesThunderhideJotunn()
+        {
+            var controller = CreateController(out var go, out var combatRunner);
+            yield return null;
+            controller.SelectBlessing(SelectedBlessing.Thor);
+
+            yield return WalkStageToBossNodeWithoutWinning(controller);
+
+            Assert.That(combatRunner.Encounter.Enemies.Any(e => e.MaxHP == 38), Is.True);
+
+            Object.Destroy(go);
+        }
+
+        [UnityTest]
+        public IEnumerator EnterNode_AnubisBossNode_IncludesAmmitsShade()
+        {
+            var controller = CreateController(out var go, out var combatRunner);
+            yield return null;
+            controller.SelectBlessing(SelectedBlessing.Anubis);
+
+            yield return WalkStageToBossNodeWithoutWinning(controller);
+
+            Assert.That(combatRunner.Encounter.Enemies.Any(e => e.MaxHP == 36), Is.True);
+
+            Object.Destroy(go);
+        }
+
+        [UnityTest]
+        public IEnumerator EnterNode_SunWukongBossNode_IncludesStoneGuardian()
+        {
+            var controller = CreateController(out var go, out var combatRunner);
+            yield return null;
+            controller.SelectBlessing(SelectedBlessing.SunWukong);
+
+            yield return WalkStageToBossNodeWithoutWinning(controller);
+
+            Assert.That(combatRunner.Encounter.Enemies.Any(e => e.MaxHP == 40), Is.True);
 
             Object.Destroy(go);
         }
