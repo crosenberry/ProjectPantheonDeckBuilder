@@ -25,6 +25,7 @@ namespace Pantheon.Unity
         private const int BossExclusiveChancePercent = 10;
 
         public CombatEncounterRunner CombatRunner;
+        public GameObject MainMenuPanel;
         public GameObject BlessingSelectPanel;
         public GameObject MapPanel;
         public GameObject[] CombatPanels;
@@ -32,6 +33,7 @@ namespace Pantheon.Unity
 
         public Core.Run.Run CurrentRun { get; private set; }
         public Player Player { get; private set; }
+        public bool MainMenuDismissed { get; private set; }
         public bool BlessingSelected { get; private set; }
         public bool InCombat { get; private set; }
         public bool AwaitingBossReward { get; private set; }
@@ -45,6 +47,12 @@ namespace Pantheon.Unity
         private void Start()
         {
             _random = new SystemRandom();
+            TogglePanels();
+        }
+
+        public void StartPlay()
+        {
+            MainMenuDismissed = true;
             TogglePanels();
         }
 
@@ -218,9 +226,14 @@ namespace Pantheon.Unity
 
         private void TogglePanels()
         {
+            if (MainMenuPanel != null)
+            {
+                MainMenuPanel.SetActive(!MainMenuDismissed);
+            }
+
             if (BlessingSelectPanel != null)
             {
-                BlessingSelectPanel.SetActive(!BlessingSelected);
+                BlessingSelectPanel.SetActive(MainMenuDismissed && !BlessingSelected);
             }
 
             if (MapPanel != null)

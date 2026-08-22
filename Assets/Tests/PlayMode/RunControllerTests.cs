@@ -74,6 +74,30 @@ namespace Pantheon.PlayTests
         }
 
         [UnityTest]
+        public IEnumerator Start_BeforeStartingPlay_MainMenuNotDismissed()
+        {
+            var controller = CreateController(out var go, out _);
+            yield return null;
+
+            Assert.That(controller.MainMenuDismissed, Is.False);
+
+            Object.Destroy(go);
+        }
+
+        [UnityTest]
+        public IEnumerator StartPlay_DismissesMainMenu()
+        {
+            var controller = CreateController(out var go, out _);
+            yield return null;
+
+            controller.StartPlay();
+
+            Assert.That(controller.MainMenuDismissed, Is.True);
+
+            Object.Destroy(go);
+        }
+
+        [UnityTest]
         public IEnumerator Start_BeforeSelection_AwaitsBlessingChoice()
         {
             var controller = CreateController(out var go, out _);
@@ -345,16 +369,24 @@ namespace Pantheon.PlayTests
             var combatRunner = go.AddComponent<CombatEncounterRunner>();
             var controller = go.AddComponent<RunController>();
             controller.CombatRunner = combatRunner;
+            var mainMenuPanel = new GameObject("MainMenuPanel");
             var blessingSelectPanel = new GameObject("BlessingSelectPanel");
             var mapPanel = new GameObject("MapPanel");
             var bossRewardPanel = new GameObject("BossRewardPanel");
             var combatPanel = new GameObject("CombatPanel");
+            controller.MainMenuPanel = mainMenuPanel;
             controller.BlessingSelectPanel = blessingSelectPanel;
             controller.MapPanel = mapPanel;
             controller.BossRewardPanel = bossRewardPanel;
             controller.CombatPanels = new[] { combatPanel };
             yield return null;
 
+            Assert.That(mainMenuPanel.activeSelf, Is.True, "Main menu should be visible before Play is pressed.");
+            Assert.That(blessingSelectPanel.activeSelf, Is.False, "Blessing select should stay hidden until Play is pressed.");
+
+            controller.StartPlay();
+
+            Assert.That(mainMenuPanel.activeSelf, Is.False, "Main menu should hide once Play is pressed.");
             Assert.That(blessingSelectPanel.activeSelf, Is.True, "Blessing select should be visible before any choice is made.");
             Assert.That(mapPanel.activeSelf, Is.False, "Map should stay hidden until a Blessing is selected.");
 
@@ -388,6 +420,7 @@ namespace Pantheon.PlayTests
             Assert.That(mapPanel.activeSelf, Is.False, "Map should hide while awaiting the boss reward.");
 
             Object.Destroy(go);
+            Object.Destroy(mainMenuPanel);
             Object.Destroy(blessingSelectPanel);
             Object.Destroy(mapPanel);
             Object.Destroy(bossRewardPanel);
