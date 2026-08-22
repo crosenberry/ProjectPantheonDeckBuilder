@@ -11,6 +11,7 @@ using Pantheon.Core.Enemies.Greek;
 using Pantheon.Core.Enemies.Norse;
 using Pantheon.Core.Enemies.Egyptian;
 using Pantheon.Core.Enemies.Chinese;
+using Pantheon.Core.Enemies.Hook2;
 using Pantheon.Core.Meta;
 using Pantheon.Core.Meta.Greek;
 using Pantheon.Core.Run;
@@ -157,14 +158,15 @@ namespace Pantheon.Unity
         {
             var node = CurrentRun.CurrentStage.Nodes[nodeIndex];
 
-            // Placeholder bosses: the full minimal roster at once, until real
-            // stage bosses are designed (deferred with the rest of full enemy/boss
-            // design, GDD section 11).
+            // Placeholder bosses: the full minimal roster at once, plus that
+            // mythology's Hook 2 resource-managing enemy (Docs/Enemies/
+            // Hook2-ResourceEnemies.md), until real stage bosses are designed
+            // (deferred with the rest of full enemy/boss design, GDD section 11).
             if (_selectedBlessing == SelectedBlessing.Thor)
             {
                 if (node.Type == NodeType.Boss)
                 {
-                    return new[] { NorseEnemies.DraugrReaver(_random), NorseEnemies.SeidrHexer(_random) }
+                    return new[] { NorseEnemies.DraugrReaver(_random), NorseEnemies.SeidrHexer(_random), Hook2Enemies.ThunderhideJotunn(_random) }
                         .Concat(NorseEnemies.WolfPack(count: 2, _random))
                         .ToList();
                 }
@@ -178,7 +180,7 @@ namespace Pantheon.Unity
             {
                 if (node.Type == NodeType.Boss)
                 {
-                    return new[] { EgyptianEnemies.UshabtiSentinel(_random), EgyptianEnemies.SetsCultist(_random) }
+                    return new[] { EgyptianEnemies.UshabtiSentinel(_random), EgyptianEnemies.SetsCultist(_random), Hook2Enemies.AmmitsShade(_random) }
                         .Concat(EgyptianEnemies.ScarabSwarmPack(count: 2, _random))
                         .ToList();
                 }
@@ -192,7 +194,7 @@ namespace Pantheon.Unity
             {
                 if (node.Type == NodeType.Boss)
                 {
-                    return new[] { ChineseEnemies.HeavenlySoldier(_random), ChineseEnemies.NineTailedFoxSpirit(_random) }
+                    return new[] { ChineseEnemies.HeavenlySoldier(_random), ChineseEnemies.NineTailedFoxSpirit(_random), Hook2Enemies.StoneGuardian(_random) }
                         .Concat(ChineseEnemies.YakshaSwarmPack(count: 2, _random))
                         .ToList();
                 }
@@ -204,7 +206,7 @@ namespace Pantheon.Unity
 
             if (node.Type == NodeType.Boss)
             {
-                return new[] { GreekEnemies.HopliteSkirmisher(_random), GreekEnemies.HarpyScreecher(_random) }
+                return new[] { GreekEnemies.HopliteSkirmisher(_random), GreekEnemies.HarpyScreecher(_random), Hook2Enemies.WrathfulErinys(_random) }
                     .Concat(GreekEnemies.ViperBrood(count: 2, _random))
                     .ToList();
             }
